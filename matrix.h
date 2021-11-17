@@ -111,7 +111,7 @@ public:
         return (coord == rm.coord && vert_dim == rm.vert_dim && horiz_dim == rm.horiz_dim);
     }
     bool operator!= (const Matrix<T>& rm) const {
-        return (coord != rm.coord && vert_dim == rm.vert_dim && horiz_dim == rm.horiz_dim);
+        return (coord != rm.coord || vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim);
     }
 
     T* operator[](size_t n) const { // So that mat[n][m] gives m-1-th element of mat[n]
