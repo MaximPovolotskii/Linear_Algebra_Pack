@@ -6,6 +6,7 @@
 #define LINALG_MATRIX_H
 #include <vector>
 #include <exception>
+#include "matrix_multiplication.h"
 
 class BadMatrixDimension: public std::exception {
 public:
@@ -17,28 +18,16 @@ public:
 template <class T>
 class Matrix {
 private:
-    std::vector<T> coord{};
+    T* coord{};
     size_t vert_dim = 0;
     size_t horiz_dim = 0;
 public:
     Matrix() = default;
 
-    explicit Matrix(const std::vector<T> &v, const size_t &vert_dim_, const size_t &horiz_dim_) {
+    explicit Matrix(T* v, const size_t &vert_dim_, const size_t &horiz_dim_) {
         coord = v;
         vert_dim = vert_dim_;
         horiz_dim = horiz_dim_;
-    }
-
-    explicit Matrix(const std::vector<std::vector<T>> mat) {
-        vert_dim = mat.size();
-        //Here we need a check whether all horizontal dimensions are correct or not
-        //(they must be equal and non-zero)
-        //IDK whether to throw an exception or not
-        for (size_t i = 0; i < vert_dim; i++) {
-            for (auto it = mat.begin(); it != mat.end(); it++) {
-                coord.push_back(*it);
-            }
-        }
     }
 
     Matrix(Matrix<T> &&rhs) noexcept : coord(std::move(rhs.coord)) {
@@ -72,7 +61,7 @@ public:
     ~Matrix() = default;
 
 
-    std::vector<T> Shape() const {
+    T* Shape() const {
         std::vector<size_t> shape({vert_dim, horiz_dim});
         return shape;
     }
@@ -81,9 +70,10 @@ public:
         if (Shape() != rm.Shape())  {
             throw BadMatrixDimension();     /// Think about exceptions
         }
-        std::vector<T> res;
-        for (size_t i = 0; i < coord.size(); i++){
-            res.push_back(coord[i] + rm.coord[i]);
+        T* res;
+        size_t mat_size = vert_dim * horiz_dim;
+        for (size_t i = 0; i < mat_size; i++){
+            res[i] = coord[i] + rm.coord[i];
         }
         return Matrix<T>(std::move(res));
     }
@@ -92,17 +82,19 @@ public:
         if (Shape() != rm.Shape())  {
             throw BadMatrixDimension();     /// Think about exceptions
         }
-        std::vector<T> res;
-        for (size_t i = 0; i < coord.size(); i++){
-            res.push_back(coord[i] - rm.coord[i]);
+        T* res;
+        size_t mat_size = vert_dim * horiz_dim;
+        for (size_t i = 0; i < mat_size; i++){
+            res[i] = coord[i] - rm.coord[i];
         }
         return Matrix<T>(std::move(res));
     }
 
     Matrix operator*(const T& val) const {
-        std::vector<T> res;
-        for (size_t i = 0; i < coord.size(); i++) {
-            res.push_back(coord[i] * val);
+        T* res;
+        size_t mat_size = vert_dim * horiz_dim;
+        for (size_t i = 0; i < mat_size; i++) {
+            res[i] = coord[i] * val;
         }
         return Matrix<T>(std::move(res));
     }
@@ -111,37 +103,48 @@ public:
         return (coord == rm.coord && vert_dim == rm.vert_dim && horiz_dim == rm.horiz_dim);
     }
     bool operator!= (const Matrix<T>& rm) const {
-        return (coord != rm.coord || vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim);
+        return (coord != rm.coord && vert_dim == rm.vert_dim && horiz_dim == rm.horiz_dim);
     }
 
-    T* operator[](size_t n) const { // So that mat[n][m] gives m-1-th element of mat[n]
-        if (n < vert_dim) {
-            return coord.begin() + (n * horiz_dim);
+    T& operator()(const size_t i, const size_t j) {
+        if (i < vert_dim && j < horiz_dim) {
+            return coord[i * horiz_dim + j];
         }
     }
 
-    Matrix operator* (const Matrix<T>& rm) const {
+    Matrix operator* (Matrix<T>& rm) {
         if (horiz_dim != rm.vert_dim) {
             throw BadMatrixDimension();
         }
 
-        std::vector<T> res;
-        T buffer; //T must be 0-compatible time
+        T* res = new T[rm.horiz_dim * vert_dim];
+        T buffer; //T must be 0-compatible type
 
         for (size_t i = 0; i < vert_dim; i++) {
             for (size_t j = 0; j < rm.horiz_dim; j++) {
                 buffer = 0;
                 for (size_t k = 0; k < horiz_dim; k++) {
-                    buffer += coord[horiz_dim * i + k] * rm[k][j];
+                    buffer += coord[horiz_dim * i + k] * rm(k, j);
                 }
-                res.push_back(buffer);
+                res[i * rm.horiz_dim + j] = buffer;
             }
         }
-
         return Matrix(res, vert_dim, rm.horiz_dim);
     }
 
+    Matrix SmartMult(Matrix<T>& rm) {
+        if (horiz_dim != rm.vert_dim) {
+            throw BadMatrixDimension();
+        }
+
+        T* res = new T[rm.horiz_dim * vert_dim];
+        gemm_v2(vert_dim, horiz_dim, rm.horiz_dim, coord, rm.coord, res);
+
+        return Matrix(res, vert_dim, rm.horiz_dim);
+    }
 };
+
+
 
 
 
