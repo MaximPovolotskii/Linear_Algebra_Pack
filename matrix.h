@@ -168,6 +168,15 @@ public:
 
         return Matrix(res, vert_dim, rm.horiz_dim);
     }
+
+    T Determinant()  {
+        if (VertDim() != HorizDim()) {
+            throw NotSquareMatrix();
+        }
+        T det_calc = T(1);
+        Matrix<T> B = StraightRun(*this, Vector<T>(horiz_dim), det_calc).first;
+        return det_calc;
+    }
 };
 
 
