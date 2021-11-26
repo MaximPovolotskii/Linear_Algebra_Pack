@@ -15,15 +15,45 @@ public:
     }
 };
 
+class NotSquareMatrix:public BadMatrixDimension {
+public:
+    const char* what() const throw() override {
+        return "Matrix is not square";
+    }
+};
+
+enum Matrix_types
+{
+    NULLMATRIX,
+    IDENTITY
+};
+
 template <class T>
 class Matrix {
 private:
     T* coord;
     size_t vert_dim = 0;
     size_t horiz_dim = 0;
-
 public:
     Matrix() = default;
+    Matrix(size_t n, int matrix_type = NULLMATRIX): coord(new T[n*n]) {
+        vert_dim = n;
+        horiz_dim = n;
+        if (matrix_type == NULLMATRIX) {
+            for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
+                coord[i] = 0;
+            }
+        }
+        if (matrix_type == IDENTITY) {
+            for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
+                coord[i] = 0;
+            }
+            for (size_t i = 0; i < vert_dim ; i++) {
+                coord[i*vert_dim + i] = 1;
+            }
+        }
+    }
+
 
     explicit Matrix(T* v, size_t vert_dim_, size_t horiz_dim_): coord(new T[vert_dim_ * horiz_dim_]) {
         vert_dim = vert_dim_;
@@ -136,6 +166,9 @@ public:
         if (i < vert_dim && j < horiz_dim) {
             return coord[i * horiz_dim + j];
         }
+        else {
+            throw BadMatrixDimension();
+        }
     }
 
     Matrix operator* (Matrix<T>& rm) {
@@ -169,18 +202,26 @@ public:
         return Matrix(res, vert_dim, rm.horiz_dim);
     }
 
-    T Determinant()  {
+    T Determinant() const {
         if (VertDim() != HorizDim()) {
             throw NotSquareMatrix();
         }
         T det_calc = T(1);
-        Matrix<T> B = StraightRun(*this, Vector<T>(horiz_dim), det_calc).first;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim), det_calc).first;
         return det_calc;
     }
+
+
+    Matrix<T> Inverse() const {
+        if (VertDim() != HorizDim()) {
+            throw NotSquareMatrix();
+        }
+        T det_calc = T(0);
+        std::pair<Matrix<T>, Matrix<T>> p;
+        p = StraightRun(*this, Matrix<T>(horiz_dim, IDENTITY), det_calc);
+        p = ReverseRun(p.first, p.second);
+        return p.second;
+    };
 };
-
-
-
-
 
 #endif //LINALG_MATRIX_H
