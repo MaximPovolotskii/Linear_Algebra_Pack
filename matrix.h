@@ -8,6 +8,9 @@
 #include <exception>
 #include "matrix_multiplication.h"
 
+const double EPS = 1E-9;
+
+
 class BadMatrixDimension: public std::exception {
 public:
     const char* what() const throw() override {
@@ -15,17 +18,30 @@ public:
     }
 };
 
-class NotSquareMatrix:public BadMatrixDimension {
+class NotSquareMatrix: public BadMatrixDimension {
 public:
     const char* what() const throw() override {
         return "Matrix is not square";
     }
 };
 
+class IndexOutOfMatrix: public std::exception {
+    const char* what() const throw() override {
+        return "Index out of range";
+    }
+};
+
+template<class T>
+const T& min(const T& a, const T& b)
+{
+    return (b < a) ? b : a;
+}
+
 enum Matrix_types
 {
-    NULLMATRIX,
-    IDENTITY
+    NULLMATRIX,  ///нулевая
+    IDENTITY, ///единичная
+    NONE  ///плевать
 };
 
 template <class T>
@@ -36,9 +52,9 @@ private:
     size_t horiz_dim = 0;
 public:
     Matrix() = default;
-    Matrix(size_t n, int matrix_type = NULLMATRIX): coord(new T[n*n]) {
-        vert_dim = n;
-        horiz_dim = n;
+    Matrix(size_t vert_dim_, size_t horiz_dim_, int matrix_type = NONE): coord(new T[vert_dim_*horiz_dim_]) {
+        vert_dim = vert_dim_;
+        horiz_dim = horiz_dim_;
         if (matrix_type == NULLMATRIX) {
             for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
                 coord[i] = 0;
@@ -48,8 +64,8 @@ public:
             for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
                 coord[i] = 0;
             }
-            for (size_t i = 0; i < vert_dim ; i++) {
-                coord[i*vert_dim + i] = 1;
+            for (size_t i = 0; i < min(vert_dim, horiz_dim); i++) {
+                coord[i*horiz_dim + i] = 1;
             }
         }
     }
@@ -167,7 +183,7 @@ public:
             return coord[i * horiz_dim + j];
         }
         else {
-            throw BadMatrixDimension();
+            throw IndexOutOfMatrix();
         }
     }
 
@@ -207,10 +223,10 @@ public:
             throw NotSquareMatrix();
         }
         T det_calc = T(1);
-        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim), det_calc).first;
+        std::vector<size_t> v;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v).first;
         return det_calc;
     }
-
 
     Matrix<T> Inverse() const {
         if (VertDim() != HorizDim()) {
@@ -218,10 +234,26 @@ public:
         }
         T det_calc = T(0);
         std::pair<Matrix<T>, Matrix<T>> p;
-        p = StraightRun(*this, Matrix<T>(horiz_dim, IDENTITY), det_calc);
+        std::vector<size_t> v;
+        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v);
         p = ReverseRun(p.first, p.second);
         return p.second;
     };
+
+
+    size_t Rank() const {
+        size_t rank = 0;
+        T det_calc = T(0);
+        std::vector<size_t> v;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v).first;
+        for (size_t i = 0; i < min(horiz_dim, vert_dim); i++) {
+            if (abs(B(i, i)) > EPS) {
+                rank++;
+            }
+        }
+        return rank;
+    }
+
 };
 
 #endif //LINALG_MATRIX_H
