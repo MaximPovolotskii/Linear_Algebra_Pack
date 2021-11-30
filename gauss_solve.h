@@ -6,7 +6,7 @@
 
 #include "matrix.h"
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v) {
+std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
     v = {};
     size_t number_of_null_rows = 0;
     for (size_t i0 = 0; i0 < A.HorizDim(); i0++) {
@@ -73,27 +73,27 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
             i--;
         }
     }
+    for (size_t i = 0; i < min(A.HorizDim(), A.VertDim()); i++) {
+        if (abs(A(i, i)) > EPS) {
+            rank++;
+        }
+    }
     return {A, B};
 }
 
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B) {
-    if (A.HorizDim() != A.VertDim()) {
-        throw BadMatrixDimension(); // пока так
-    }
+std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t& rank) {
     if (B.VertDim() != A.VertDim()) {
         throw BadMatrixDimension();
     }
-    for (size_t i = min(A.HorizDim(), A.VertDim()) - 1; i < size_t(-1); i--) {
-        if (A(i, i) != 0) {
-            for (size_t k = i - 1; k < size_t(-1); k--) {
-                T c = A(k, i);
-                for (size_t j = i; j < A.HorizDim(); j++) {
-                    A(k, j) = A(k, j) - c * A(i, j);
-                }
-                for (size_t j1 = 0; j1 < A.HorizDim(); j1++) {
-                    B(k, j1) = B(k, j1) - c * B(i, j1);
-                }
+    for (size_t i = rank-1; i < size_t(-1); i--) {
+        for (size_t k = i - 1; k < size_t(-1); k--) {
+            T c = A(k, i);
+            for (size_t j = i; j < A.HorizDim(); j++) {
+                A(k, j) = A(k, j) - c * A(i, j);
+            }
+            for (size_t j1 = 0; j1 < B.HorizDim(); j1++) {
+                B(k, j1) = B(k, j1) - c * B(i, j1);
             }
         }
     }
