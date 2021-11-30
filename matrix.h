@@ -48,6 +48,7 @@ template <class T>
 class Matrix {
 private:
     T* coord;
+
     size_t vert_dim = 0;
     size_t horiz_dim = 0;
 public:
@@ -257,3 +258,4 @@ public:
 };
 
 #endif //LINALG_MATRIX_H
+
