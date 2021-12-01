@@ -16,13 +16,13 @@ int main() {
     }*/
 
     Matrix<int> A(a, n, m);
-    max = give_abs_int(A, n, m);
-    print_matrix_int(A,n,m);
-    std::cout<<give_trace(A,n,m)<<std::endl;
+    max = GiveAbsInt(A);
+    PrintMatrixInt(A);
+    std::cout<<GiveTrace(A)<<std::endl;
 
     int b[12] {1000, 2530, 0, 0, 2, 260, 3, 4, 70};
     Matrix<int> B(b, n, n);
-    print_matrix_int(B,n,n);
-    std::cout<<give_trace(B,n,n)<<std::endl;
+    PrintMatrixInt(B);
+    std::cout<<GiveTrace(B)<<std::endl;
 
 }

@@ -1,9 +1,9 @@
 #include "matrix.h"
-int give_abs_int(Matrix<int> A, int n, int m){
+int GiveAbsInt(Matrix<int> A){
     int max = (A(0,0));
     int min = (A(0,0));
-    for (uint32_t i=0; i<n; i++){
-        for (uint32_t j=0; j<m; j++){
+    for (uint32_t i=0; i<A.VertDim(); i++){
+        for (uint32_t j=0; j<A.HorizDim(); j++){
             if (A(i,j) <min) {
                 min = A(i,j);
             }
@@ -18,25 +18,25 @@ int give_abs_int(Matrix<int> A, int n, int m){
         return abs(max);}
 }
 
-uint32_t razryad(int max){
+uint32_t Razryad(int max){
     uint32_t k =1; ///the number of razryadov
     if (max>=10) {while ((max/=10) > 0) k++;}
     return k;
 }
 
-void print_matrix_int(Matrix<int> A, int n, int m){
-    int max = give_abs_int(A, n, m);
-    uint32_t k = razryad(max),l = 1; ///the number of razryadov
+void PrintMatrixInt(Matrix<int> A){
+    int max = GiveAbsInt(A);
+    uint32_t k = Razryad(max),l = 1; ///the number of razryadov
     //while ((max/=10) > 0) k++;
     //std::cout << max<< " ";
     //std::cout << k<< std::endl;
 
-    for (uint32_t i=0; i<n; i++){
-        for (uint32_t j=0; j<m; j++){
+    for (uint32_t i=0; i<A.VertDim(); i++){
+        for (uint32_t j=0; j<A.HorizDim(); j++){
             int z = A(i,j);
             std::cout << z << " ";
 
-            l=razryad(z);
+            l=Razryad(z);
             while (k!=l){
                 l++;
                 std::cout << " ";
@@ -46,10 +46,10 @@ void print_matrix_int(Matrix<int> A, int n, int m){
     }
 
 }
-float give_max_el(Matrix<int> A, int n, int m){
+float GiveMaxEl(Matrix<int> A){
     float max = (A(0,0));
-    for (uint32_t i=0; i<n; i++){
-        for (uint32_t j=0; j<m; j++){
+    for (uint32_t i=0; i<A.VertDim(); i++){
+        for (uint32_t j=0; j<A.HorizDim(); j++){
             if (A(i,j) > max) {
                 max = A(i,j);
             }
@@ -58,10 +58,10 @@ float give_max_el(Matrix<int> A, int n, int m){
         return max;
 }
 
-float give_min_el(Matrix<int> A, int n, int m){
+float GiveMinEl(Matrix<int> A){
     int min = (A(0,0));
-    for (uint32_t i=0; i<n; i++){
-        for (uint32_t j=0; j<m; j++){
+    for (uint32_t i=0; i<A.VertDim(); i++){
+        for (uint32_t j=0; j<A.HorizDim(); j++){
             if (A(i,j) <min) {
                 min = A(i,j);
             }
@@ -69,13 +69,13 @@ float give_min_el(Matrix<int> A, int n, int m){
         return min;
 }
 
-float give_trace(Matrix<int> A, int n, int m){
-    if (n!=m){
+float GiveTrace(Matrix<int> A){
+    if (A.VertDim()!=A.HorizDim()){
         return -1;///here need to be exception, but it's not working...
     }
     else{
         float tr=0;
-        for (uint32_t i=0; i<n; i++){
+        for (uint32_t i=0; i<A.VertDim(); i++){
             tr+=A(i,i);
         }
         return tr;
