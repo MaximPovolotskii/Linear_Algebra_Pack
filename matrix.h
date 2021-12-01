@@ -79,6 +79,18 @@ public:
         }
     }
 
+    Matrix (std::vector<T> v, size_t vert_dim_, size_t horiz_dim_):  coord(new T[vert_dim_ * horiz_dim_]){
+        vert_dim = vert_dim_;
+        horiz_dim = horiz_dim_;
+        if (v.size() != vert_dim_*horiz_dim_) {
+            throw BadMatrixDimension();
+        }
+        for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
+            coord[i] = v[i];
+        }
+    }
+
+
     Matrix(Matrix<T> &&rhs) noexcept  {
         coord = rhs.coord;
         rhs.coord = nullptr;
