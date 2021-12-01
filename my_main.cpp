@@ -1,7 +1,7 @@
 #include <iostream>
 #include "gauss_solve.h"
 #include "matrix.h"
-#include "vect.h"
+#include "vector.h"
 #include "print.h"
 
 
@@ -20,9 +20,11 @@ int main() {
     PrintMatrixInt(A);
     std::cout<<GiveTrace(A)<<std::endl;
 
-    int b[12] {1000, 2530, 0, 0, 2, 260, 3, 4, 70};
-    Matrix<int> B(b, n, n);
-    PrintMatrixInt(B);
-    std::cout<<GiveTrace(B)<<std::endl;
+    float b[9] {0,0,1,0,0,0,0,0,1};
+    //Matrix<int> B(b, n, n);
+    //PrintMatrixInt(B);
+    //std::cout<<GiveTrace(B)<<std::endl;
 
+    Vector<float> v(b,n*3);
+    PrintVectorFloat(Norm(v));
 }

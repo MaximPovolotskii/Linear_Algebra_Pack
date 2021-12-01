@@ -80,3 +80,10 @@ float GiveTrace(Matrix<int> A){
         }
         return tr;
 }}
+
+
+void PrintVectorFloat(Vector<float> v){
+    for (uint32_t i=0; i<v.VertDim(); i++){
+        std::cout << v(i)<< std::endl;
+    }
+}
