@@ -2,6 +2,7 @@
 #ifndef LINALG_GAUSS_SOLVE_H
 #define LINALG_GAUSS_SOLVE_H
 
+
 #include "matrix.h"
 
 template<typename T>

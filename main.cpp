@@ -3,6 +3,11 @@
 #include "gauss_solve.h"
 
 int main() {
+    int c[4] = {1, 2, 3, 4};
+    Matrix<int> a1(c, 2, 2);
+    Matrix<int> b1 = a1.SmartMult(a1);
+    std::cout << b1(0, 0) << " " << b1(0, 1) << " " << b1(1, 0) << " " << b1(1, 1) << std::endl;
+
     float a[12] {0, 0, 0, 0, 2, 0, 3, 4, 7, 0, 8, 1};
     float b[3] {0, 1, 7};
     std::vector<size_t> v;
@@ -53,5 +58,4 @@ int main() {
     std::cout << mat_b(0, 0) << " " << mat_b(0, 1) << "\n" << mat_b(1, 0) << " " << mat_b(1, 1) << std::endl;
     return 0;
 
-    return 0;
 }

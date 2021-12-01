@@ -54,6 +54,7 @@ private:
 public:
     Matrix() = default;
     Matrix(size_t vert_dim_, size_t horiz_dim_, int matrix_type = NONE): coord(new T[vert_dim_*horiz_dim_]) {
+
         transposed = false;
         vert_dim = vert_dim_;
         horiz_dim = horiz_dim_;
@@ -81,6 +82,18 @@ public:
             coord[i] = v[i];
         }
     }
+
+    Matrix (std::vector<T> v, size_t vert_dim_, size_t horiz_dim_):  coord(new T[vert_dim_ * horiz_dim_]){
+        vert_dim = vert_dim_;
+        horiz_dim = horiz_dim_;
+        if (v.size() != vert_dim_*horiz_dim_) {
+            throw BadMatrixDimension();
+        }
+        for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
+            coord[i] = v[i];
+        }
+    }
+
 
     Matrix(Matrix<T> &&rhs) noexcept  {
         coord = rhs.coord;
@@ -252,7 +265,8 @@ public:
         }
         T det_calc = T(1);
         std::vector<size_t> v;
-        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v).first;
+        size_t rank = 0;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v, rank).first;
         return det_calc;
     }
 
@@ -261,10 +275,12 @@ public:
             throw NotSquareMatrix();
         }
         T det_calc = T(0);
+        size_t rank = 0;
         std::pair<Matrix<T>, Matrix<T>> p;
         std::vector<size_t> v;
-        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v);
-        p = ReverseRun(p.first, p.second);
+
+        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v, rank);
+        p = ReverseRun(p.first, p.second, v, rank);
         return p.second;
     };
 
@@ -323,5 +339,17 @@ public:
     }
 };
 
-#endif //LINALG_MATRIX_H
 
+
+    size_t Rank() const {
+        size_t rank = 0;
+        T det_calc = T(0);
+        std::vector<size_t> v;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v, rank).first;
+        return rank;
+    }
+
+
+};
+
+#endif //LINALG_MATRIX_H
