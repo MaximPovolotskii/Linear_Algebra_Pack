@@ -1,5 +1,6 @@
 #include <iostream>
 #include "matrix.h"
+#include "gauss_solve.h"
 
 int main() {
     int c[4] = {1, 2, 3, 4};
@@ -39,5 +40,22 @@ int main() {
         std::cout << '\n';
     }
 
+    std::cout << '\n';
+
+    C.Transpose();
+    for (size_t i = 0; i < C.VertDim(); i++) {
+        for (size_t j = 0; j < C.HorizDim(); j++) {
+            std::cout << C(i, j) << " ";
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << '\n';
+
+    float c[4] = {1, 2, 3, 4};
+    Matrix<float> mat_a(c, 2, 2);
+    Matrix<float> mat_b = mat_a.SmartMult(mat_a);
+    std::cout << mat_b(0, 0) << " " << mat_b(0, 1) << "\n" << mat_b(1, 0) << " " << mat_b(1, 1) << std::endl;
     return 0;
+
 }

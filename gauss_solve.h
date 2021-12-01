@@ -3,8 +3,8 @@
 #define LINALG_GAUSS_SOLVE_H
 
 
-
 #include "matrix.h"
+
 template<typename T>
 std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
     v = {};
