@@ -3,9 +3,9 @@
 
 int main() {
     int c[4] = {1, 2, 3, 4};
-    Matrix<int> a(c, 2, 2);
-    Matrix<int> b = a.SmartMult(a);
-    std::cout << b(0, 0) << " " << b(0, 1) << " " << b(1, 0) << " " << b(1, 1) << std::endl;
+    Matrix<int> a1(c, 2, 2);
+    Matrix<int> b1 = a1.SmartMult(a1);
+    std::cout << b1(0, 0) << " " << b1(0, 1) << " " << b1(1, 0) << " " << b1(1, 1) << std::endl;
 
     float a[12] {0, 0, 0, 0, 2, 0, 3, 4, 7, 0, 8, 1};
     float b[3] {0, 1, 7};

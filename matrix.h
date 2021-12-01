@@ -48,7 +48,6 @@ template <class T>
 class Matrix {
 private:
     T* coord;
-
     size_t vert_dim = 0;
     size_t horiz_dim = 0;
 public:
@@ -225,7 +224,8 @@ public:
         }
         T det_calc = T(1);
         std::vector<size_t> v;
-        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v).first;
+        size_t rank = 0;
+        Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v, rank).first;
         return det_calc;
     }
 
@@ -234,10 +234,11 @@ public:
             throw NotSquareMatrix();
         }
         T det_calc = T(0);
+        size_t rank = 0;
         std::pair<Matrix<T>, Matrix<T>> p;
         std::vector<size_t> v;
-        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v);
-        p = ReverseRun(p.first, p.second);
+        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v, rank);
+        p = ReverseRun(p.first, p.second, v, rank);
         return p.second;
     };
 
@@ -246,16 +247,11 @@ public:
         size_t rank = 0;
         T det_calc = T(0);
         std::vector<size_t> v;
-        Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v).first;
-        for (size_t i = 0; i < min(horiz_dim, vert_dim); i++) {
-            if (abs(B(i, i)) > EPS) {
-                rank++;
-            }
-        }
+        Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v, rank).first;
         return rank;
     }
+
 
 };
 
 #endif //LINALG_MATRIX_H
-
