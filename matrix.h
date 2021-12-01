@@ -340,16 +340,4 @@ public:
 };
 
 
-
-    size_t Rank() const {
-        size_t rank = 0;
-        T det_calc = T(0);
-        std::vector<size_t> v;
-        Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v, rank).first;
-        return rank;
-    }
-
-
-};
-
 #endif //LINALG_MATRIX_H
