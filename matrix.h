@@ -46,8 +46,8 @@ enum Matrix_types
 
 template <class T>
 class Matrix {
-private:
-    T* coord;
+protected:
+    T* coord = nullptr;
     size_t vert_dim = 0;
     size_t horiz_dim = 0;
     bool transposed = false;
@@ -84,6 +84,7 @@ public:
     }
 
     Matrix (std::vector<T> v, size_t vert_dim_, size_t horiz_dim_):  coord(new T[vert_dim_ * horiz_dim_]){
+	transposed = false;
         vert_dim = vert_dim_;
         horiz_dim = horiz_dim_;
         if (v.size() != vert_dim_*horiz_dim_) {
