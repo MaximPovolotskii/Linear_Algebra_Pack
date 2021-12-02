@@ -27,4 +27,15 @@ int main() {
 
     Vector<float> v(b,n*3);
     PrintVectorFloat(Norm(v));
+
+    int c[9] {4,3,2, 0,7,5, 0, 0,1};
+    /*for (int i = 1; i < N; i++) {
+        if (a[i] > max) {
+            max = a[i];
+        }
+    }*/
+
+    Matrix<int> C(c, 3, 3);
+    PrintMatrixInt(C*C);
+    PrintMatrixInt(C.Pow(C,7));
 }
