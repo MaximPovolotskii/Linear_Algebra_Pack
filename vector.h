@@ -3,6 +3,8 @@
 #define LINALG_VECTOR_H
 
 #include "matrix.h"
+#include <cmath>
+#include <complex>
 
 class BadVectorDimension: public BadMatrixDimension {
 public:
@@ -62,7 +64,7 @@ public:
     explicit Vector(size_t n, int type = NONE) : Matrix<T>(n, 1, type) {}
     Vector(T* v, size_t n) : Matrix<T>(v, n, 1) {}
     Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
-    T& operator() (size_t i) {
+    T& operator() (size_t i) const {
         if (i >= this->VertDim()) {
             throw BadVectorDimension();
         }
@@ -83,5 +85,24 @@ Vector<T> CrossProduct(Vector<T> lv, Vector<T> rv)  {
 }
 
 
+template <class T>
+T Norm(const Vector<T>& v) {
+    T a = 0;
+    for (size_t i = 0; i < v.VertDim(); i++){
+        a += std::abs(v(i))*std::abs(v(i));
+    }
+    a = std::sqrt(a);
+    return a;
+}
+
+template <class T>
+Vector<T> Normalize(const Vector<T>& v){
+    T b[v.VertDim()];
+    T n = Norm(v);
+    for (size_t i = 0; i < v.VertDim(); i++){
+        b[i] = v(i)/n;
+    }
+    return Vector<T>(b, v.VertDim());
+}
 
 #endif //LINALG_VECTOR_H
