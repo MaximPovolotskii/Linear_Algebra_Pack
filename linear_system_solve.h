@@ -6,6 +6,7 @@
 #include "matrix.h"
 #include "gauss_solve.h"
 #include <tuple>
+#include <cmath>
 
 template<typename T>
 std::tuple<bool, Vector<T>, Matrix<T>> LinearSystemSolve(const Matrix<T> & A, const Vector<T> & b) {

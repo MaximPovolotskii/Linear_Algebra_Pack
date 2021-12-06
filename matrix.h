@@ -243,12 +243,13 @@ public:
         size_t K = (horiz_dim/8 + 1) * 8;
         size_t N = (rm.horiz_dim/8 + 1) * 8;
 
-        T* left_mat = (*this).Expand_And_HardTranspose(M, K, false);
-        T* right_mat = rm.Expand_And_HardTranspose(K, N, true);
+        T* left_mat = (*this).ExpandAndHardTranspose(M, K, false);
+        T* right_mat = rm.ExpandAndHardTranspose(K, N, true);
 
         T* res = new T[M * N];
         T* res_norm = new T[vert_dim * rm.horiz_dim];
-        gemm_v2(M, K, N, left_mat, right_mat, res);
+        gemm<T> multiply;
+        multiply(M, K, N, left_mat, right_mat, res);
 
         for (size_t i = 0; i < vert_dim; ++i) {
             size_t cur_raw = i * rm.horiz_dim;
@@ -299,7 +300,7 @@ public:
         std::swap(vert_dim, horiz_dim);
     }
 
-    T* Expand_And_HardTranspose(size_t M, size_t K, bool flip) {
+    T* ExpandAndHardTranspose(size_t M, size_t K, bool flip) {
         T* left_mat;
         left_mat = new T[M * K];
         if (!flip) {
