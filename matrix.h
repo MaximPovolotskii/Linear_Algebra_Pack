@@ -114,7 +114,7 @@ public:
         }
     }
 
-    Matrix &operator=(Matrix<T> &&rhs) noexcept {
+    virtual Matrix &operator=(Matrix<T> &&rhs) noexcept {
         if (this == &rhs) return *this;
         Matrix<T> mat(std::move(rhs));
         std::swap(transposed, mat.transposed);
@@ -124,7 +124,7 @@ public:
         return *this;
     }
 
-    Matrix &operator=(const Matrix<T> &rhs) {
+    virtual Matrix &operator=(const Matrix<T> &rhs) {
         if (this == &rhs) return *this;
         Matrix<T> mat(rhs);
         std::swap(transposed, mat.transposed);
@@ -155,10 +155,10 @@ public:
         if (Shape() != rm.Shape())  {
             throw BadMatrixDimension();
         }
-        T* res;
+        T* res = new T[vert_dim*horiz_dim];
         for (size_t i = 0; i < vert_dim; ++i) {
             for (size_t j = 0; j < horiz_dim; ++j) {
-                res[i*horiz_dim + j] = *this(i, j) + rm(i, j);
+                res[i*horiz_dim + j] = (*this)(i, j) + rm(i, j);
             }
         }
         return Matrix<T>(std::move(res), vert_dim, horiz_dim);
@@ -171,28 +171,28 @@ public:
         T* res;
         for (size_t i = 0; i < vert_dim; ++i) {
             for (size_t j = 0; j < horiz_dim; ++j) {
-                res[i*horiz_dim + j] = *this(i, j) - rm(i, j);
+                res[i*horiz_dim + j] = (*this)(i, j) - rm(i, j);
             }
         }
         return Matrix<T>(std::move(res), vert_dim, horiz_dim);
     }
 
     Matrix operator*(const T& val) const {
-        T* res;
         size_t mat_size = vert_dim * horiz_dim;
+        T* res = new T[mat_size];
         for (size_t i = 0; i < mat_size; i++) {
             res[i] = coord[i] * val;
         }
         return Matrix<T>(std::move(res), vert_dim, horiz_dim);
     }
 
-    bool operator == (const Matrix<T>& rm) const {
+    bool operator== (const Matrix<T>& rm) const {
         if (vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim) {
             return false;
         }
         for (size_t i = 0; i < vert_dim; ++i) {
             for (size_t j = 0; j < horiz_dim; j++) {
-                if (*this(i, j) != rm(i, j)) { return false; }
+                if ((*this)(i, j) != rm(i, j)) { return false; }
             }
         }
         return true;
@@ -214,7 +214,7 @@ public:
         }
     }
 
-    Matrix operator* (Matrix<T>& rm) {
+    Matrix operator* (const Matrix<T>& rm) {
         if (horiz_dim != rm.vert_dim) {
             throw BadMatrixDimension();
         }
@@ -226,7 +226,7 @@ public:
             for (size_t j = 0; j < rm.horiz_dim; j++) {
                 buffer = 0;
                 for (size_t k = 0; k < horiz_dim; k++) {
-                    buffer += *this(i, k) * rm(k, j);
+                    buffer += (*this)(i, k) * rm(k, j);
                 }
                 res[i * rm.horiz_dim + j] = buffer;
             }
@@ -340,6 +340,17 @@ public:
         return left_mat;
     }
 };
+template<typename T>
+void ShowMatrix(const Matrix<T>&  mat)
+{
+    for (size_t i = 0; i < mat.VertDim(); i++) {
+        for (size_t j = 0; j < mat.HorizDim(); j++) {
+            printf(" %10.3f", mat(i,j));
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
 
 
 #endif //LINALG_MATRIX_H
