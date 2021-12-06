@@ -15,6 +15,50 @@ template<class T>
 class Vector : public Matrix<T> {
 public:
     Vector() : Matrix<T>() {};
+    Vector(const Matrix<T> & mat): Matrix<T>(mat){
+        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+    }
+    Vector(Matrix<T> && mat): Matrix<T>(mat){
+        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+    }
+    Vector(const Vector<T> & vect): Matrix<T>(vect) {}
+    Vector(Vector<T> && vect): Matrix<T>(vect) {}
+    Vector &operator=(Matrix<T> &&rhs) noexcept {
+        if (this == &rhs) return *this;
+        Vector<T> mat(std::move(rhs));
+        std::swap(this->Matrix<T>::transposed, mat.transposed);
+        std::swap(this->Matrix<T>::coord, mat.coord);
+        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+        return *this;
+    }
+    Vector &operator=(Vector<T> &&rhs) noexcept {
+        if (this == &rhs) return *this;
+        Vector<T> mat(std::move(rhs));
+        std::swap(this->Matrix<T>::transposed, mat.transposed);
+        std::swap(this->Matrix<T>::coord, mat.coord);
+        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+        return *this;
+    }
+    Vector &operator=(const Matrix<T> &rhs) {
+        if (this == &rhs) return *this;
+        Vector<T> mat(rhs);
+        std::swap(this->Matrix<T>::transposed, mat.transposed);
+        std::swap(this->Matrix<T>::coord, mat.coord);
+        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+        return *this;
+    }
+    Vector &operator=(const Vector<T> &rhs) {
+        if (this == &rhs) return *this;
+        Vector<T> mat(rhs);
+        std::swap(this->Matrix<T>::transposed, mat.transposed);
+        std::swap(this->Matrix<T>::coord, mat.coord);
+        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+        return *this;
+    }
     explicit Vector(size_t n, int type = NONE) : Matrix<T>(n, 1, type) {}
     Vector(T* v, size_t n) : Matrix<T>(v, n, 1) {}
     Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
