@@ -19,7 +19,7 @@ std::tuple<bool, Vector<T>, Matrix<T>> LinearSystemSolve(const Matrix<T> & A, co
     Matrix<T> B = std::move(p.first);
     Vector<T> remainder = std::move(p.second);
     for (size_t i = rank; i < remainder.VertDim(); i++) {
-        if (abs(remainder(i)) > EPS ) {
+        if (std::abs(remainder(i)) > EPS ) {
             return {false, Vector<T>(A.HorizDim(), NULLMATRIX), Matrix<T>(A.HorizDim(), 1, NULLMATRIX)};   ///  NO SOLUTIONS
         }
     }
