@@ -22,18 +22,21 @@ bool Converged (Matrix<T>& mat) {
 }
 
 template <typename T>
-std::pair<Matrix<std::complex<T>>, Matrix<std::complex<T>>> QREigenvalues (const Matrix<std::complex<T>>& A) {
+std::pair<Matrix<T>, Matrix<T>> QREigenvalues (const Matrix<T>& A) {
     bool converged = false;
 
-    Matrix<std::complex<T>> A_k = A;
-    Matrix<std::complex<T>> U_k(A.VertDim(), A.HorizDim(), IDENTITY);
-    Matrix<std::complex<T>> Q_k(A.VertDim(), A.VertDim());
-    Matrix<std::complex<T>> R_k(A.VertDim(), A.HorizDim());
-    while (!converged) {
+    Matrix<T> A_k = A;
+    Matrix<T> U_k(A.VertDim(), A.HorizDim(), IDENTITY);
+    Matrix<T> Q_k(A.VertDim(), A.VertDim());
+    Matrix<T> R_k(A.VertDim(), A.HorizDim());
+    size_t i = 0;
+
+    while (i < 1200) {
         QRDecomposition(A_k, Q_k, R_k); //Q_k, R_k
         A_k = R_k * Q_k; //A_(k+1) = R_k * Q_k
         U_k = U_k * Q_k; //U_(k+1) = U_k * Q_k
         converged = Converged(A_k);
+        ++i;
     }
 
     return {A_k, U_k};
