@@ -6,11 +6,6 @@
 #include <complex>
 #include <type_traits>
 
-template<typename T>
-struct is_complex : public std::false_type {};
-
-template<typename T>
-struct is_complex<std::complex<T>> : public std::true_type {};
 
 template <typename CT>
 std::enable_if_t<is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v) {
@@ -75,10 +70,7 @@ std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& 
 
         CT a;
 
-        auto r = std::abs(Norm(x));
-        auto phi = std::arg(mat(k, k));
-        a = std::polar(r, phi);
-        a = -a;
+        a = std::abs(Norm(x));
         for (size_t i = 0; i < e.VertDim(); i++)
             e(i) = (i == k) ? 1 : 0;
         e = x + e*a;

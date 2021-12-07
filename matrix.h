@@ -7,8 +7,14 @@
 #include <vector>
 #include <exception>
 #include "matrix_multiplication.h"
-
+#include <complex>
 const double EPS = 1E-9;
+
+template<typename T>
+struct is_complex : public std::false_type {};
+
+template<typename T>
+struct is_complex<std::complex<T>> : public std::true_type {};
 
 
 class BadMatrixDimension: public std::exception {
@@ -88,6 +94,7 @@ public:
         vert_dim = vert_dim_;
         horiz_dim = horiz_dim_;
         if (v.size() != vert_dim_*horiz_dim_) {
+            std::cerr<<"In Matrix(std::vector<T> v, size_t v, size_t h)  ";
             throw BadMatrixDimension();
         }
         for (size_t i = 0; i < vert_dim * horiz_dim; i++) {
@@ -153,6 +160,7 @@ public:
 
     Matrix operator+(const Matrix<T>& rm) const {
         if (Shape() != rm.Shape())  {
+            std::cerr<<"In Matrix::operator +   ";
             throw BadMatrixDimension();
         }
         T* res = new T[vert_dim*horiz_dim];
@@ -166,6 +174,7 @@ public:
 
     Matrix operator-(const Matrix<T>& rm) const {
         if (Shape() != rm.Shape())  {
+            std::cerr<<"In Matrix::operator -   ";
             throw BadMatrixDimension();
         }
         T* res;
@@ -228,6 +237,7 @@ public:
 
     Matrix operator* (const Matrix<T>& rm) {
         if (horiz_dim != rm.vert_dim) {
+            std::cerr<<"In Matrix::operator *   ";
             throw BadMatrixDimension();
         }
 
@@ -248,6 +258,7 @@ public:
 
     Matrix SmartMult(Matrix<T>& rm) { //to fix non-8-divisible cases and transposed cases
         if (horiz_dim != rm.vert_dim) {
+            std::cerr<<"In Matrix::SmartMult   ";
             throw BadMatrixDimension();
         }
 
@@ -275,6 +286,7 @@ public:
 
     T Determinant() const {
         if (VertDim() != HorizDim()) {
+            std::cerr<<"In Matrix::Determinant   ";
             throw NotSquareMatrix();
         }
         T det_calc = T(1);
@@ -283,20 +295,6 @@ public:
         Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v, rank).first;
         return det_calc;
     }
-
-    Matrix<T> Inverse() const {
-        if (VertDim() != HorizDim()) {
-            throw NotSquareMatrix();
-        }
-        T det_calc = T(0);
-        size_t rank = 0;
-        std::pair<Matrix<T>, Matrix<T>> p;
-        std::vector<size_t> v;
-
-        p = StraightRun(*this, Matrix<T>(horiz_dim, horiz_dim, IDENTITY), det_calc, v, rank);
-        p = ReverseRun(p.first, p.second, v, rank);
-        return p.second;
-    };
 
 
     size_t Rank() const {
@@ -351,7 +349,41 @@ public:
         }
         return left_mat;
     }
+
+    template <typename Q = T>
+    std::enable_if_t<is_complex<Q>::value, void> Conjugate() {
+        for (size_t i = 0; i< VertDim(); i++) {
+            for (size_t j = 0; j < HorizDim(); j++) {
+                (*this)(i, j) = std::conj((*this)(i, j));
+            }
+        }
+    }
+    template <typename Q = T>
+    std::enable_if_t<!is_complex<Q>::value, void> Conjugate() {
+        return;
+    }
+
 };
+template<typename T>
+std::pair<bool, Matrix<T>> Inverse(const Matrix<T> & A) {
+    if (A.VertDim() != A.HorizDim()) {
+        std::cerr<<"In Inverse(const Matrix<T> &)   ";
+        throw NotSquareMatrix();
+    }
+    T det_calc = T(1);
+    size_t rank = 0;
+    std::pair<Matrix<T>, Matrix<T>> p;
+    std::vector<size_t> v;
+
+    p = StraightRun(A, Matrix<T>(A.HorizDim(), A.HorizDim(), IDENTITY), det_calc, v, rank);
+
+    if (det_calc == 0) {
+        return {false, Matrix<T>(A.VertDim(), A.HorizDim(), NULLMATRIX)};
+    }
+    p = ReverseRun(p.first, p.second, v, rank);
+    return {true, p.second};
+};
+
 template<typename T>
 void ShowMatrix(const Matrix<T>&  mat)
 {

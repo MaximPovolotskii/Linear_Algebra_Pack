@@ -18,14 +18,22 @@ class Vector : public Matrix<T> {
 public:
     Vector() : Matrix<T>() {};
     Vector(const Matrix<T> & mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+        if (mat.HorizDim() != 1) {
+            std::cerr<<"In Vector(const Matrix<T> & ) ";
+            throw BadMatrixDimension();}
     }
     Vector(Matrix<T> && mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+        if (mat.HorizDim() != 1) {
+            std::cerr<<"In Vector(Matrix<T> && ) ";
+            throw BadMatrixDimension();}
     }
     Vector(const Vector<T> & vect): Matrix<T>(vect) {}
     Vector(Vector<T> && vect): Matrix<T>(vect) {}
     Vector &operator=(Matrix<T> &&rhs) noexcept {
+        if (rhs.HorizDim() != 1) {
+            std::cerr<<"In Vector &operator=(Matrix<T> &&)   ";
+            throw BadMatrixDimension();
+        }
         if (this == &rhs) return *this;
         Vector<T> mat(std::move(rhs));
         std::swap(this->Matrix<T>::transposed, mat.transposed);
@@ -44,6 +52,10 @@ public:
         return *this;
     }
     Vector &operator=(const Matrix<T> &rhs) {
+        if (rhs.HorizDim() != 1) {
+            std::cerr << "In Vector &operator=(const Matrix<T> &)   ";
+            throw BadMatrixDimension();
+        }
         if (this == &rhs) return *this;
         Vector<T> mat(rhs);
         std::swap(this->Matrix<T>::transposed, mat.transposed);
@@ -66,7 +78,7 @@ public:
     Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
     const T& operator() (size_t i) const {
         if (i >= this->VertDim()) {
-            std::cerr<<"Vector::operator()";
+            std::cerr<<"In Vector::operator()   ";
             throw BadVectorDimension();
         }
         return this->Matrix<T>::operator()(i, 0);
@@ -74,7 +86,7 @@ public:
 
     T& operator() (size_t i) {
         if (i >= this->VertDim()) {
-            std::cerr<<"Vector::operator()";
+            std::cerr<<"In Vector::operator()   ";
             throw BadVectorDimension();
         }
         return this->Matrix<T>::operator()(i, 0);
@@ -84,6 +96,7 @@ public:
 template<class T>
 Vector<T> CrossProduct(Vector<T> lv, Vector<T> rv)  {
     if ((lv.VertDim() != 3)||(rv.VertDim()  != 3))  {
+        std::cerr<<"In CrossProduct   ";
         throw BadVectorDimension();
     }
     T a0 = lv(1) * rv(2) - lv(2) * rv(1);
