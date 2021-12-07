@@ -1,6 +1,3 @@
-//
-// Created by Максим on 05.12.2021.
-//
 
 #ifndef LINALG_QR_EIGVALS_H
 #define LINALG_QR_EIGVALS_H
@@ -8,16 +5,16 @@
 #include "matrix.h"
 #include <algorithm>
 #include <cmath>
+#include "qr_decomposition.h"
 
-const double THRESHOLD = 1E-3;
+const double THRESHOLD = 1E-1;
 
-//the algorithm works only for symmetric matrices
 
 template <typename T>
 bool Converged (Matrix<T>& mat) {
     for (size_t i = 1; i < mat.VertDim(); ++i) {
         for (size_t j = 0; j < i; ++j) {
-            if (abs(mat(i, j)) > THRESHOLD)
+            if (std::abs(mat(i, j)) > THRESHOLD)
                 return false;
         }
     }
@@ -25,16 +22,17 @@ bool Converged (Matrix<T>& mat) {
 }
 
 template <typename T>
-std::pair<Matrix<T>, Matrix<T>> QR_Eigenvalues (Matrix<T>& A) {
+std::pair<Matrix<std::complex<T>>, Matrix<std::complex<T>>> QREigenvalues (const Matrix<std::complex<T>>& A) {
     bool converged = false;
-    Matrix<T> A_k = A;
-    Matrix<T> U_k(A.VertDim(), A.HorizDim(), IDENTITY);
-    std::pair<Matrix<T>, Matrix<T>> QR_k;
 
-    while (!coverged) {
-        QR_k = QRDecomposition(A_k); //Q_k, R_k
-        A_k = QR_k.second * QR_k.first; //A_(k+1) = R_k * Q_k
-        U_k = U_k * QR_k.first; //U_(k+1) = U_k * Q_k
+    Matrix<std::complex<T>> A_k = A;
+    Matrix<std::complex<T>> U_k(A.VertDim(), A.HorizDim(), IDENTITY);
+    Matrix<std::complex<T>> Q_k(A.VertDim(), A.VertDim());
+    Matrix<std::complex<T>> R_k(A.VertDim(), A.HorizDim());
+    while (!converged) {
+        QRDecomposition(A_k, Q_k, R_k); //Q_k, R_k
+        A_k = R_k * Q_k; //A_(k+1) = R_k * Q_k
+        U_k = U_k * Q_k; //U_(k+1) = U_k * Q_k
         converged = Converged(A_k);
     }
 
