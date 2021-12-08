@@ -3,6 +3,8 @@
 #define LINALG_VECTOR_H
 
 #include "matrix.h"
+#include <cmath>
+#include <complex>
 
 class BadVectorDimension: public BadMatrixDimension {
 public:
@@ -16,14 +18,22 @@ class Vector : public Matrix<T> {
 public:
     Vector() : Matrix<T>() {};
     Vector(const Matrix<T> & mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+        if (mat.HorizDim() != 1) {
+            std::cerr<<"In Vector(const Matrix<T> & ) ";
+            throw BadMatrixDimension();}
     }
     Vector(Matrix<T> && mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {throw BadMatrixDimension();}
+        if (mat.HorizDim() != 1) {
+            std::cerr<<"In Vector(Matrix<T> && ) ";
+            throw BadMatrixDimension();}
     }
     Vector(const Vector<T> & vect): Matrix<T>(vect) {}
     Vector(Vector<T> && vect): Matrix<T>(vect) {}
     Vector &operator=(Matrix<T> &&rhs) noexcept {
+        if (rhs.HorizDim() != 1) {
+            std::cerr<<"In Vector &operator=(Matrix<T> &&)   ";
+            throw BadMatrixDimension();
+        }
         if (this == &rhs) return *this;
         Vector<T> mat(std::move(rhs));
         std::swap(this->Matrix<T>::transposed, mat.transposed);
@@ -42,6 +52,10 @@ public:
         return *this;
     }
     Vector &operator=(const Matrix<T> &rhs) {
+        if (rhs.HorizDim() != 1) {
+            std::cerr << "In Vector &operator=(const Matrix<T> &)   ";
+            throw BadMatrixDimension();
+        }
         if (this == &rhs) return *this;
         Vector<T> mat(rhs);
         std::swap(this->Matrix<T>::transposed, mat.transposed);
@@ -62,18 +76,27 @@ public:
     explicit Vector(size_t n, int type = NONE) : Matrix<T>(n, 1, type) {}
     Vector(T* v, size_t n) : Matrix<T>(v, n, 1) {}
     Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
-    T& operator() (size_t i) {
+    const T& operator() (size_t i) const {
         if (i >= this->VertDim()) {
+            std::cerr<<"In Vector::operator()   ";
             throw BadVectorDimension();
         }
         return this->Matrix<T>::operator()(i, 0);
     }
-    
+
+    T& operator() (size_t i) {
+        if (i >= this->VertDim()) {
+            std::cerr<<"In Vector::operator()   ";
+            throw BadVectorDimension();
+        }
+        return this->Matrix<T>::operator()(i, 0);
+    }
 };
 
 template<class T>
 Vector<T> CrossProduct(Vector<T> lv, Vector<T> rv)  {
     if ((lv.VertDim() != 3)||(rv.VertDim()  != 3))  {
+        std::cerr<<"In CrossProduct   ";
         throw BadVectorDimension();
     }
     T a0 = lv(1) * rv(2) - lv(2) * rv(1);
@@ -83,5 +106,31 @@ Vector<T> CrossProduct(Vector<T> lv, Vector<T> rv)  {
 }
 
 
+template <class T>
+long double Norm(const Vector<T>& v) {
+    long double a = 0;
+    for (size_t i = 0; i < v.VertDim(); i++){
+        a += std::abs(v(i))*std::abs(v(i));
+    }
+    a = std::sqrt(a);
+    return a;
+}
+
+template <class T>
+Vector<T> Normalize(const Vector<T>& v){
+    T b[v.VertDim()];
+    long double n = Norm(v);
+    if (std::abs(n) > EPS) {
+        for (size_t i = 0; i < v.VertDim(); i++) {
+            b[i] = v(i) / n;
+        }
+    }
+    else {
+        for (size_t i = 0; i < v.VertDim(); i++) {
+            b[i] = 0;
+        }
+    }
+    return Vector<T>(b, v.VertDim());
+}
 
 #endif //LINALG_VECTOR_H
