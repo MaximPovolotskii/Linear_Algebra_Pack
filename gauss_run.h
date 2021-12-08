@@ -1,17 +1,22 @@
 
-#ifndef LINALG_GAUSS_SOLVE_H
-#define LINALG_GAUSS_SOLVE_H
+#ifndef LINALG_GAUSS_RUN_H
+#define LINALG_GAUSS_RUN_H
 
-<<<<<<< HEAD
-
-#include "matrix.h"
-=======
 #include "matrix.h"
 #include <cmath>
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
+#include <complex>
+
+const long double G_EPS = 1E-4;
 
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
+std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank);
+
+template<typename T>
+std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t& rank);
+
+
+template<typename T>
+std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T &det, std::vector<size_t> &v, size_t &rank) {
     v = {};
     size_t number_of_null_rows = 0;
     for (size_t i0 = 0; i0 < A.HorizDim(); i0++) {
@@ -21,15 +26,9 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
         throw BadMatrixDimension();
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim() - number_of_null_rows); i++) {
-<<<<<<< HEAD
-        if (abs(A(i, i)) < EPS) {         ///Перестановка строк
-            for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
-                if (abs(A(i1, i)) > EPS) {
-=======
-        if (std::abs(A(i, i)) < EPS) {         ///Перестановка строк
-            for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
-                if (std::abs(A(i1, i)) > EPS) {
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
+        if (std::abs(A(i, i)) < G_EPS) {         ///Перестановка строк
+            for (size_t i1 = i; i1 < A.VertDim(); i1++) {
+                if (std::abs(A(i1, i)) > G_EPS) {
                     for (size_t j1 = i; j1 < A.HorizDim(); j1++) {
                         std::swap(A(i1, j1), A(i, j1));
                     }
@@ -41,15 +40,9 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
                 }
             }
         }
-<<<<<<< HEAD
-        if (abs(A(i, i)) < EPS) { ///нужно переставлять столбцы
+        if (std::abs(A(i, i)) < G_EPS) { ///нужно переставлять столбцы
             for (size_t j3 = i; j3 < A.HorizDim(); j3++) {
-                if (abs(A(i, j3)) > EPS) {
-=======
-        if (std::abs(A(i, i)) < EPS) { ///нужно переставлять столбцы
-            for (size_t j3 = i; j3 < A.HorizDim(); j3++) {
-                if (std::abs(A(i, j3)) > EPS) {
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
+                if (std::abs(A(i, j3)) > G_EPS) {
                     for (size_t i3 = 0; i3 < A.VertDim(); i3++) {
                         std::swap(A(i3, i), A(i3, j3));
                     }
@@ -58,11 +51,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
                 }
             }
         }
-<<<<<<< HEAD
-        if (abs(A(i, i)) > EPS)         ///Иначе вся строка нулевая
-=======
-        if (std::abs(A(i, i)) > EPS)         ///Иначе вся строка нулевая
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
+        if (std::abs(A(i, i)) > G_EPS)         ///Иначе вся строка нулевая
         {
             T a = A(i, i);
             for (size_t j = i; j < A.HorizDim(); j++) {    ///разделили i-тую строку на A[i, i]
@@ -94,12 +83,9 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
             i--;
         }
     }
+
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim()); i++) {
-<<<<<<< HEAD
-        if (abs(A(i, i)) > EPS) {
-=======
-        if (std::abs(A(i, i)) > EPS) {
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
+        if (std::abs(A(i, i)) > G_EPS) {
             rank++;
         }
     }
@@ -107,7 +93,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
 }
 
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t& rank) {
+std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t &rank) {
     if (B.VertDim() != A.VertDim()) {
         throw BadMatrixDimension();
     }
@@ -127,4 +113,4 @@ std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector
 
 
 
-#endif //LINALG_GAUSS_SOLVE_H
+#endif //LINALG_GAUSS_RUN_H

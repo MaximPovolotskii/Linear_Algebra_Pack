@@ -1,5 +1,14 @@
 #include "matrix.h"
-int GiveAbsInt(Matrix<int> A){
+
+void PrintVectorFloat(Vector<float> v);
+int GiveAbsInt(Matrix<int> A);
+uint32_t Razryad(int max);
+void PrintMatrixInt(Matrix<int> A);
+float GiveMaxEl(Matrix<int> A);
+float GiveMinEl(Matrix<int> A);
+float Trace(Matrix<int> A);
+
+int GiveAbsInt(Matrix<int> A) {
     int max = (A(0,0));
     int min = (A(0,0));
     for (uint32_t i=0; i<A.VertDim(); i++){
@@ -7,24 +16,24 @@ int GiveAbsInt(Matrix<int> A){
             if (A(i,j) <min) {
                 min = A(i,j);
             }
-                if (A(i,j) > max) {
-                    max = A(i,j);
-                }
-    }}
+            if (A(i,j) > max) {
+                max = A(i,j);
+            }
+        }}
     if (abs(min)>abs(max)){
-    return abs(min);}
+        return abs(min);}
     else {
 
         return abs(max);}
 }
 
-uint32_t Razryad(int max){
+uint32_t Razryad(int max) {
     uint32_t k =1; ///the number of razryadov
     if (max>=10) {while ((max/=10) > 0) k++;}
     return k;
 }
 
-void PrintMatrixInt(Matrix<int> A){
+void PrintMatrixInt(Matrix<int> A) {
     int max = GiveAbsInt(A);
     uint32_t k = Razryad(max),l = 1; ///the number of razryadov
     //while ((max/=10) > 0) k++;
@@ -46,7 +55,8 @@ void PrintMatrixInt(Matrix<int> A){
     }
 
 }
-float GiveMaxEl(Matrix<int> A){
+
+float GiveMaxEl(Matrix<int> A) {
     float max = (A(0,0));
     for (uint32_t i=0; i<A.VertDim(); i++){
         for (uint32_t j=0; j<A.HorizDim(); j++){
@@ -55,10 +65,10 @@ float GiveMaxEl(Matrix<int> A){
             }
         }}
 
-        return max;
+    return max;
 }
 
-float GiveMinEl(Matrix<int> A){
+float GiveMinEl(Matrix<int> A) {
     int min = (A(0,0));
     for (uint32_t i=0; i<A.VertDim(); i++){
         for (uint32_t j=0; j<A.HorizDim(); j++){
@@ -66,10 +76,10 @@ float GiveMinEl(Matrix<int> A){
                 min = A(i,j);
             }
         }}
-        return min;
+    return min;
 }
 
-float GiveTrace(Matrix<int> A){
+float Trace(Matrix<int> A) {
     if (A.VertDim()!=A.HorizDim()){
         return -1;///here need to be exception, but it's not working...
     }
@@ -79,11 +89,12 @@ float GiveTrace(Matrix<int> A){
             tr+=A(i,i);
         }
         return tr;
-}}
+    }}
 
-
-void PrintVectorFloat(Vector<float> v){
+void PrintVectorFloat(Vector<float> v) {
     for (uint32_t i=0; i<v.VertDim(); i++){
         std::cout << v(i)<< std::endl;
     }
 }
+
+

@@ -5,7 +5,9 @@
 #include <exception>
 #include "matrix.h"
 
-int* PowersTwo(int a){///4 is equal to [0,0,1]
+int* PowersTwo(int a);
+
+int *PowersTwo(int a) {///4 is equal to [0,0,1]
     int a_2[a];
     int i = 0;
     while (a > 0) {
@@ -15,4 +17,5 @@ int* PowersTwo(int a){///4 is equal to [0,0,1]
     }
     std::cout<<a_2;
 }
+
 #endif //LINALG_VECT_H

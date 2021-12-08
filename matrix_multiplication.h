@@ -6,50 +6,29 @@
 #define LINALG_MATRIX_MULTIPLICATION_H
 #include <immintrin.h>
 
-<<<<<<< HEAD
-template <typename U>
-void gemm_v2(size_t M, size_t N, size_t K, const U* A, const U* B, U* C)
-{
-    for (size_t i = 0; i < M; ++i)
-    {
-        U* c = C + i * N;
-=======
-void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, float* C)
-{
+void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, float* C);
+void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B, double* C);
+
+void float_gemm(size_t M, size_t N, size_t K, const float *A, const float *B, float *C) {
     for (size_t i = 0; i < M; ++i)
     {
         float* c = C + i * N;
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
         for (int j = 0; j < N; j += 8)
             _mm256_storeu_ps(c + j + 0, _mm256_setzero_ps());
         for (int k = 0; k < K; ++k)
         {
-<<<<<<< HEAD
-            const U *b = B + k * N;
-            __m256 a = _mm256_set1_ps(A[i*K + k]);
-            for (int j = 0; j < N; j += 16)
-            {
-                _mm256_storeu_ps(c + j + 0, _mm256_fmadd_ps(a,
-                                                            _mm256_loadu_ps(b + j + 0), _mm256_loadu_ps(c + j + 0)));
-                _mm256_storeu_ps(c + j + 8, _mm256_fmadd_ps(a,
-                                                            _mm256_loadu_ps(b + j + 8), _mm256_loadu_ps(c + j + 8)));
-=======
             const float *b = B + k * N;
             __m256 a = _mm256_set1_ps(A[i*K + k]);
             for (int j = 0; j < N; j += 8)
             {
                 _mm256_storeu_ps(c + j + 0, _mm256_fmadd_ps(a,
                                                             _mm256_loadu_ps(b + j + 0), _mm256_loadu_ps(c + j + 0)));
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
             }
         }
     }
 }
 
-<<<<<<< HEAD
-=======
-void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B, double* C)
-{
+void double_gemm(size_t M, size_t N, size_t K, const double *A, const double *B, double *C) {
     for (size_t i = 0; i < M; ++i)
     {
         double* c = C + i * N;
@@ -67,6 +46,7 @@ void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B,
         }
     }
 }
+
 
 template <typename T, typename Enable = void>
 struct gemm {
@@ -101,5 +81,4 @@ struct gemm <T, typename std::enable_if<std::is_same<T, double>::value>> {
     }
 };
 
->>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
 #endif //LINALG_MATRIX_MULTIPLICATION_H
