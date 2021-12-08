@@ -3,42 +3,22 @@
 #define LINALG_MATRIX_H
 #include <vector>
 #include <exception>
+#include "decl.h"
+
+template <class T>
+class Matrix;
+
+
 #include "matrix_multiplication.h"
+#include "gauss_run.h"
 #include <complex>
-const double EPS = 1E-9;
+const double EPS = 1E-11;
 
 template<typename T>
 struct is_complex : public std::false_type {};
 
 template<typename T>
 struct is_complex<std::complex<T>> : public std::true_type {};
-
-
-class BadMatrixDimension: public std::exception {
-public:
-    const char* what() const throw() override {
-        return "Dimensions do not converge";
-    }
-};
-
-class NotSquareMatrix: public BadMatrixDimension {
-public:
-    const char* what() const throw() override {
-        return "Matrix is not square";
-    }
-};
-
-class IndexOutOfMatrix: public std::exception {
-    const char* what() const throw() override {
-        return "Index out of range";
-    }
-};
-
-template<class T>
-const T& min(const T& a, const T& b)
-{
-    return (b < a) ? b : a;
-}
 
 enum Matrix_types
 {
@@ -204,8 +184,16 @@ public:
         return true;
     }
 
-    bool operator != (const Matrix<T>& rm) const {
-        return !(this == rm);
+    bool operator!= (const Matrix<T>& rm) const {
+        if (vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim) {
+            return true;
+        }
+        for (size_t i = 0; i < vert_dim; ++i) {
+            for (size_t j = 0; j < horiz_dim; j++) {
+                if (std::abs((*this)(i, j) - rm(i, j)) > EPS) { return true; }
+            }
+        }
+        return false;
     }
 
     const T& operator()(size_t i, size_t j) const{
@@ -239,7 +227,7 @@ public:
         }
 
         T* res = new T[rm.horiz_dim * vert_dim];
-        T buffer; 
+        T buffer;
 
         for (size_t i = 0; i < vert_dim; i++) {
             for (size_t j = 0; j < rm.horiz_dim; j++) {
