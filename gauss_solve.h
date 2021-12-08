@@ -5,6 +5,8 @@
 #include "matrix.h"
 #include <cmath>
 
+const long double G_EPS = 1E-4;
+
 template<typename T>
 std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
     v = {};
@@ -16,9 +18,9 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
         throw BadMatrixDimension();
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim() - number_of_null_rows); i++) {
-        if (std::abs(A(i, i)) < EPS) {         ///Перестановка строк
+        if (std::abs(A(i, i)) < G_EPS) {         ///Перестановка строк
             for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
-                if (std::abs(A(i1, i)) > EPS) {
+                if (std::abs(A(i1, i)) > G_EPS) {
                     for (size_t j1 = i; j1 < A.HorizDim(); j1++) {
                         std::swap(A(i1, j1), A(i, j1));
                     }
@@ -30,9 +32,9 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
                 }
             }
         }
-        if (std::abs(A(i, i)) < EPS) { ///нужно переставлять столбцы
+        if (std::abs(A(i, i)) < G_EPS) { ///нужно переставлять столбцы
             for (size_t j3 = i; j3 < A.HorizDim(); j3++) {
-                if (std::abs(A(i, j3)) > EPS) {
+                if (std::abs(A(i, j3)) > G_EPS) {
                     for (size_t i3 = 0; i3 < A.VertDim(); i3++) {
                         std::swap(A(i3, i), A(i3, j3));
                     }
@@ -41,7 +43,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
                 }
             }
         }
-        if (std::abs(A(i, i)) > EPS)         ///Иначе вся строка нулевая
+        if (std::abs(A(i, i)) > G_EPS)         ///Иначе вся строка нулевая
         {
             T a = A(i, i);
             for (size_t j = i; j < A.HorizDim(); j++) {    ///разделили i-тую строку на A[i, i]
@@ -74,7 +76,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
         }
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim()); i++) {
-        if (std::abs(A(i, i)) > EPS) {
+        if (std::abs(A(i, i)) > G_EPS) {
             rank++;
         }
     }
