@@ -6,6 +6,7 @@
 #include <complex>
 #include <type_traits>
 
+using namespace std::complex_literals;
 
 template <typename CT>
 std::enable_if_t<is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v) {
@@ -68,9 +69,10 @@ std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& 
         ExtractMinor(z, k, z1);
         ExtractColumn(z1, x, k);
 
-        CT a;
+        auto r = std::abs(Norm(x));
+        auto phi = std::arg(x(k));
+        CT a = -std::exp(1.0if*phi)*r;
 
-        a = std::abs(Norm(x));
         for (size_t i = 0; i < e.VertDim(); i++)
             e(i) = (i == k) ? 1 : 0;
         e = x + e*a;
@@ -99,16 +101,17 @@ std::enable_if_t<!is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>&
     for (size_t k = 0; k < horiz_dim && k < vert_dim - 1; k++) {
         ExtractMinor(z, k, z1);
         ExtractColumn(z1, x, k);
-        CT a = Norm(x);
+        long double a = Norm(x);
+
         if (mat(k,k) > 0) {a = -a;}
+
         for (size_t i = 0; i < e.VertDim(); i++)
             e(i) = (i == k) ? 1 : 0;
         e = x + e*a;
         e = Normalize(e);
-        // qv[k] = I - 2 *e*e^T
-        qv[k] = ComputeHouseholderFactor(e);
-        z = (qv[k] * z1);
 
+        qv[k] = ComputeHouseholderFactor(e); // qv[k] = I - 2 *e*e^T
+        z = (qv[k] * z1);
     }
     Q = qv[0];
 
