@@ -268,7 +268,7 @@ public:
 
         T* res = new T[M * N];
         T* res_norm = new T[vert_dim * rm.horiz_dim];
-        gemm<T> multiply;
+        GEMM<T> multiply;
         multiply(M, K, N, left_mat, right_mat, res);
 
         for (size_t i = 0; i < vert_dim; ++i) {

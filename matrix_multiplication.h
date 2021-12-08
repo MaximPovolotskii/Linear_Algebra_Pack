@@ -6,7 +6,7 @@
 #define LINALG_MATRIX_MULTIPLICATION_H
 #include <immintrin.h>
 
-void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, float* C)
+void FloatGEMM(size_t M, size_t N, size_t K, const float* A, const float* B, float* C)
 {
     for (size_t i = 0; i < M; ++i)
     {
@@ -26,7 +26,7 @@ void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, fl
     }
 }
 
-void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B, double* C)
+void DoubleGEMM(size_t M, size_t N, size_t K, const double* A, const double* B, double* C)
 {
     for (size_t i = 0; i < M; ++i)
     {
@@ -47,7 +47,7 @@ void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B,
 }
 
 template <typename T, typename Enable = void>
-struct gemm {
+struct GEMM {
     void operator()(size_t M, size_t N, size_t K, const T* A, const T* B, T* C) {
         for (size_t i = 0; i < M; ++i) {
             size_t A_raw = i * K;
@@ -66,16 +66,16 @@ struct gemm {
 };
 
 template<class T>
-struct gemm <T, typename std::enable_if<std::is_same<T, float>::value>> {
+struct GEMM <T, typename std::enable_if<std::is_same<T, float>::value>> {
     void operator()(size_t M, size_t N, size_t K, const T* A, const T* B, T* C) {
-        float_gemm_v2(M, N, K, A, B, C);
+        FloatGEMM(M, N, K, A, B, C);
     }
 };
 
 template<class T>
-struct gemm <T, typename std::enable_if<std::is_same<T, double>::value>> {
+struct GEMM <T, typename std::enable_if<std::is_same<T, double>::value>> {
     void operator()(size_t M, size_t N, size_t K, const T* A, const T* B, T* C) {
-        double_gemm_v2(M, N, K, A, B, C);
+        DoubleGEMM(M, N, K, A, B, C);
     }
 };
 
