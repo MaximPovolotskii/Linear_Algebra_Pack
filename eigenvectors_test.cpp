@@ -2,7 +2,7 @@
 #include <vector>
 #include "vector.h"
 #include "matrix.h"
-#include "gauss_solve.h"
+#include "gauss_run.h"
 #include "qr_decomposition.h"
 #include "qr_eigvals.h"
 #include <complex>
@@ -12,12 +12,12 @@
 using namespace std::complex_literals;
 int main() {
 
-
     std::vector<long double*> v;
     long double b0[16] {1, 2, 0, 1, 0, -2, 7, 4, 4, 0, 3, 0, -6, 0, 6, 8};
     long double b1[16] {6, 9, 0, 4, 4, 9, -7, 0, 0, 0, 0, 1, 3, -12, 0, 0};
     v.push_back(b0);
     v.push_back(b1);
+    std::cout<<"Eigenvectors test"<<"\n";
     for (auto a : v) {
         Matrix<long double> A(a, 4, 4);
 
@@ -29,13 +29,13 @@ int main() {
         std::vector<long double> evr = pqr.first;
         std::vector<std::complex<long double>> evi = pqr.second;
 
-        std::cout << "real eigenvals"<<"\n";
+        std::cout << "real eigenvalues"<<"\n";
         for (long double i : evr) {
             std::cout << i <<" ";
         }
         std::cout << '\n';
 
-        std::cout << "complex eigenvals"<<"\n";
+        std::cout << "complex eigenvalues"<<"\n";
         for (std::complex<long double> i : evi) {
             std::cout << i <<" ";
         }
@@ -43,7 +43,7 @@ int main() {
 
         for (long double e : evr) {
             auto p = FindEigenvectors(A, e);
-            std::cout<<"eigvalue "<<e<<"\n"<<"number of eigvectors "<<p.first<<"\n";
+            std::cout<<"eigenvalue "<<e<<"\n"<<"number of eigenvectors "<<p.first<<"\n";
             auto B = p.second;
             for (size_t i = 0; i < B.VertDim(); i++) {
                 for (size_t j = 0; j < B.HorizDim(); j++) {
@@ -56,7 +56,7 @@ int main() {
 
         for (std::complex<long double> e : evi) {
             auto p = FindEigenvectors(A, e);
-            std::cout<<"eigvalue"<<e<<"\n"<<"number of eigvectors  "<<p.first<<"\n";
+            std::cout<<"eigenvalue"<<e<<"\n"<<"number of eigenvectors  "<<p.first<<"\n";
             auto B = p.second;
             for (size_t i = 0; i < B.VertDim(); i++) {
                 for (size_t j = 0; j < B.HorizDim(); j++) {
@@ -67,7 +67,37 @@ int main() {
             std::cout << '\n';
         }
     }
+    std::cout << '\n' << "\n";
+
+    std::cout<<"Generalized eigenvectors test"<<"\n";
+    std::vector<long double*> u;
+    long double c0[9] {0, -3, 3, -1, -4, 6, 0, -2, 2};
+    u.push_back(c0);
+    for (auto c : u) {
+        Matrix<long double> C(c, 3, 3);
+
+        std::cout<<"det "<<C.Determinant()<<"\n";
+
+        auto pqr = (QREigenvalues(C));
+        std::vector<long double> evr = pqr.first;
+        std::vector<std::complex<long double>> evi = pqr.second;
 
 
+
+
+        for (long double e : evr) {
+            auto p = FindEigenvectors(C, e);
+            std::cout<<"eigenvalue "<<e<<"\n"<<"number of eigenvectors "<<p.first<<"\n";
+            auto B = p.second;
+            for (size_t i = 0; i < B.VertDim(); i++) {
+                for (size_t j = 0; j < B.HorizDim(); j++) {
+                    std::cout << B(i, j) << " ";
+                }
+                std::cout << '\n';
+            }
+            std::cout << '\n';
+        }
+
+    }
     return 0;
 }

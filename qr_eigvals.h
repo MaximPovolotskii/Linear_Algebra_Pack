@@ -102,10 +102,9 @@ std::pair<size_t, Matrix<T>> FindEigenvectors(const Matrix<T>& A, T lambda) {
     }
     Matrix<T> B = (A - Matrix<T>(A.HorizDim(), A.VertDim(), IDENTITY)*lambda);
 
-
     std::tuple<bool, Vector<T>, Matrix<T>> solution = LinearSystemSolve(B, Vector<T>(B.VertDim(), NULLMATRIX));
     if (!std::get<0>(solution)) {
-        return {0, Vector<T>(B.VertDim(), NULLMATRIX)};
+        return {0, Vector<T>(0)};
     }
     else {
 
@@ -122,6 +121,30 @@ std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T>& A, 
         }
     }
     return FindEigenvectors(A_c, lambda);
+}
+
+/*template <typename T>
+std::vector<size_t, Matrix<std::complex<T>>> FindAllEigenvectors(const Matrix<T>& A) {
+
+}*/
+
+template <typename T>
+std::tuple<size_t, Vector<T>, Matrix<T>> FindGeneralizedEigenvectors(const Matrix<T>& A, std::complex<T> lambda,
+                                                                     const Vector<T>& v ) {
+    if (A.VertDim() != A.HorizDim()) {
+        std::cerr<<"In FindGeneralizedEigenvectors (const Matrix<T>& , T)    ";
+        throw NotSquareMatrix();
+    }
+
+    Matrix<T> B = (A - Matrix<T>(A.HorizDim(), A.VertDim(), IDENTITY)*lambda);
+
+    std::tuple<bool, Vector<T>, Matrix<T>> solution = LinearSystemSolve(B, v);
+    if (!std::get<0>(solution)) {
+        return {0, Vector<T>(0), Vector<T>(0, 0)};
+    }
+    else {
+        return {std::get<2>(solution).HorizDim(),std::get<1>(solution), std::get<2>(solution)};
+    }
 }
 
 

@@ -3,10 +3,10 @@
 #define LINALG_LINEAR_SYSTEM_SOLVE_H
 
 #include "vector.h"
-#include "matrix.h"
-#include "gauss_solve.h"
+#include "gauss_run.h"
 #include <tuple>
 #include <cmath>
+#include "matrix.h"
 
 template<typename T>
 std::tuple<bool, Vector<T>, Matrix<T>> LinearSystemSolve(const Matrix<T> & A, const Vector<T> & b) {
@@ -19,7 +19,7 @@ std::tuple<bool, Vector<T>, Matrix<T>> LinearSystemSolve(const Matrix<T> & A, co
     Matrix<T> B = std::move(p.first);
     Vector<T> remainder = std::move(p.second);
     for (size_t i = rank; i < remainder.VertDim(); i++) {
-        if (std::abs(remainder(i)) > EPS ) {
+        if (std::abs(remainder(i)) > G_EPS ) {
             return {false, Vector<T>(A.HorizDim(), NULLMATRIX), Matrix<T>(A.HorizDim(), 1, NULLMATRIX)};   ///  NO SOLUTIONS
         }
     }
@@ -53,13 +53,9 @@ std::tuple<bool, Vector<T>, Matrix<T>> LinearSystemSolve(const Matrix<T> & A, co
         }
     }
 
-
     return {true, ans, F};
 
-
 }
-
-
 
 
 #endif //LINALG_LINEAR_SYSTEM_SOLVE_H

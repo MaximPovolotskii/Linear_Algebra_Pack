@@ -1,59 +1,47 @@
 #include <iostream>
 #include "matrix.h"
-#include "gauss_solve.h"
+#include "vector.h"
 #include <complex>
 #include <cmath>
-
+#include "qr_decomposition.h"
+#include "gauss_run.h"
 int main() {
-    std::complex<float> a[12] {0, 0, 0, 0, 2, 0, 3, 4, 7, 0, 8, 1};
-    std::complex<float> b[3] {0, 1, 7};
+    float a[35] {0, 0, 0, 0, 0, 1, 2, 4, 8, -3, 4, 5, -3, 0, 0, 6, 3, 1, -1, 0, 4, -7, 1, 2, -5, 2, 0, 1, 0, 0, 4, 0, 2, 0, 0};
+    float b[7] {0, 12, 7, 5, -1, 1, 2};
+
     std::vector<size_t> v;
-    Matrix<std::complex<float>> A(a, 3, 4);
-    std::complex<float> det = 0;
-    std::pair<Matrix<std::complex<float>>, Matrix<std::complex<float>>> p;
+    Matrix<float> A(a, 7, 5);
+    Vector<float> s(b, 7);
+
+    float det = 0;
     size_t rank = 0;
-    p = StraightRun(A, Matrix<std::complex<float>>(b, A.VertDim(), 1), det, v, rank);
-    Matrix<std::complex<float>> B = p.first;
+
+
+    std::pair<Matrix<float>, Matrix<float>> p;
+    p = StraightRun(A, s, det, v, rank);
+    Matrix<float> B = (p.first);
+    Vector<float> remainder = (p.second);
     for (size_t i = 0; i < B.VertDim(); i++) {
         for (size_t j = 0; j < B.HorizDim(); j++) {
             std::cout << B(i, j) << " ";
         }
         std::cout << '\n';
     }
-    try {
-        p = ReverseRun(p.first, p.second, v, rank);
-    }
-    catch(std::exception &e) {
-        std::cerr<<e.what();
-    }
-    std::cout<< A.Rank();
-
     std::cout << '\n';
-    Matrix<std::complex<float>> C = p.first;
-    for (size_t i = 0; i < C.VertDim(); i++) {
-        for (size_t j = 0; j < C.HorizDim(); j++) {
-            std::cout << C(i, j) << " ";
+    std::cout << '\n';
+
+    p = ReverseRun(p.first, p.second, v, rank);
+    B = std::move(p.first);
+    remainder = std::move(p.second);
+    for (size_t i = 0; i < B.VertDim(); i++) {
+        for (size_t j = 0; j < B.HorizDim(); j++) {
+            std::cout << B(i, j) << " ";
         }
         std::cout << '\n';
     }
 
-    std::cout << '\n';
 
-    C.Transpose();
-    for (size_t i = 0; i < C.VertDim(); i++) {
-        for (size_t j = 0; j < C.HorizDim(); j++) {
-            std::cout << C(i, j) << " ";
-        }
-        std::cout << '\n';
-    }
-
-    std::cout << '\n';
-
-    std::complex<float> c[4] = {1, 2, 3, 4};
-    Matrix<std::complex<float>> mat_a(c, 2, 2);
-    Matrix<std::complex<float>> mat_b = mat_a.SmartMult(mat_a);
-    std::cout << mat_b(0, 0) << " " << mat_b(0, 1) << "\n" << mat_b(1, 0) << " " << mat_b(1, 1) << std::endl;
-    return 0;
 
     return 0;
+
 }
