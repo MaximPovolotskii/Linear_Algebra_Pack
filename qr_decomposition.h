@@ -71,7 +71,7 @@ std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& 
 
         auto r = std::abs(Norm(x));
         auto phi = std::arg(x(k));
-        CT a = -std::exp(1.0if*phi)*r;
+        CT a = -std::exp(CT(0.0, 1.0)*static_cast<CT>(phi))*static_cast<CT>(r);
 
         for (size_t i = 0; i < e.VertDim(); i++)
             e(i) = (i == k) ? 1 : 0;

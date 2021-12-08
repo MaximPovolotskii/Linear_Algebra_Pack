@@ -122,7 +122,6 @@ Vector<T> Normalize(const Vector<T>& v){
     long double n = Norm(v);
     if (std::abs(n) > EPS) {
         for (size_t i = 0; i < v.VertDim(); i++) {
-            if (v(i) < EPS) {b[i] = 0;}
             b[i] = v(i) / n;
         }
     }
