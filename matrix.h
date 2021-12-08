@@ -6,6 +6,7 @@
 #define LINALG_MATRIX_H
 #include <vector>
 #include <exception>
+#include <iostream>
 #include "matrix_multiplication.h"
 
 const double EPS = 1E-9;
@@ -200,7 +201,7 @@ public:
     }
 
     bool operator != (const Matrix<T>& rm) const {
-        return !(this == rm);
+        return this != rm;
     }
 
     T& operator()(const size_t i, const size_t j) const{
@@ -235,7 +236,20 @@ public:
         return Matrix(res, vert_dim, rm.horiz_dim);
     }
 
-    Matrix<T> Pow(Matrix<T>& rm, int n){
+    Matrix<T> Pow(Matrix<T>& rm, int n){///without ln working time
+        if (n==0){
+            T* res = new T[rm.horiz_dim * rm.vert_dim];
+            for (int i=0;i<rm.horiz_dim;i++){
+                for (size_t j = 0; j < rm.horiz_dim; j++){
+                    if (i==j){res[i * horiz_dim + j] = 1;
+                    }
+                    else {res[i * horiz_dim + j] = 0;}
+                }
+
+            }
+            return Matrix(res, rm.vert_dim, rm.horiz_dim);
+        }
+        else{
         if (vert_dim==horiz_dim){
             T* res = new T[rm.horiz_dim * rm.vert_dim];
             for (size_t i = 0; i < rm.vert_dim; i++) {
@@ -258,12 +272,28 @@ public:
             }
             //if (l!=n-1){rm = Matrix(res, vert_dim, rm.horiz_dim);}
             return Matrix(res, rm.vert_dim, rm.horiz_dim);
-            }
+            }}
             //return (*this);}
         }
         ///else - here need to be an exeption
 
+    Matrix<T> PowersTwo(Matrix<T> rm, int a){///4 is equal to [0,0,1]
+        Matrix<T> a_2[a];
+        int b_2[a];
+        int i = 0;
+        while (a > 0) {
+            //PrintMatrixInt(rm.Pow(rm,i));
+            a_2[i] = rm.Pow(rm,i)*(a % 2);
+            a = a / 2;
+            i++;
+        }
+        Matrix<T> Result = rm;
+        for (int k=0;k<i;k++){
 
+            Result = Result * a_2[k];
+        };
+        return Result;
+    }
 
     Matrix SmartMult(Matrix<T>& rm) { //to fix non-8-divisible cases and transposed cases
         if (horiz_dim != rm.vert_dim) {
@@ -330,7 +360,7 @@ public:
         std::swap(vert_dim, horiz_dim);
     }
 
-    T* Expand_And_HardTranspose(size_t M, size_t K, bool flip) { ///here need to be CamelCase
+    T* ExpandAndHardTranspose(size_t M, size_t K, bool flip) { ///here need to be CamelCase
         T* left_mat;
         left_mat = new T[M * K];
         if (!flip) {

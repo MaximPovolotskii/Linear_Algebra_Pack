@@ -9,11 +9,7 @@ int main() {
     int n=3, m=4, N = 12;
     int max;
     int a[12] {1000, 2530, 0, 0, 2, 260, 3, 4, 70, 0, 8, 1};
-    /*for (int i = 1; i < N; i++) {
-        if (a[i] > max) {
-            max = a[i];
-        }
-    }*/
+
 
     Matrix<int> A(a, n, m);
     max = GiveAbsInt(A);
@@ -21,7 +17,7 @@ int main() {
     std::cout<<GiveTrace(A)<<std::endl;
 
     float b[9] {0,0,1,0,0,0,0,0,1};
-    //Matrix<int> B(b, n, n);
+    Matrix<float> B(b, n, n);
     //PrintMatrixInt(B);
     //std::cout<<GiveTrace(B)<<std::endl;
 
@@ -29,13 +25,13 @@ int main() {
     PrintVectorFloat(Norm(v));
 
     int c[9] {4,3,2, 0,7,5, 0, 0,1};
-    /*for (int i = 1; i < N; i++) {
-        if (a[i] > max) {
-            max = a[i];
-        }
-    }*/
+
 
     Matrix<int> C(c, 3, 3);
     PrintMatrixInt(C*C);
     PrintMatrixInt(C.Pow(C,7));
+    PrintMatrixInt(C.PowersTwo(C,7));
+
+    //Matrix<int> D=C;
+    //PrintMatrixInt(D.Pow(D,7));
 }
