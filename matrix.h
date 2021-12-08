@@ -1,15 +1,12 @@
-//
-// Created by Максим on 17.11.2021.
-//
-
 #ifndef LINALG_MATRIX_H
 #define LINALG_MATRIX_H
 #include <vector>
 #include <exception>
-#include <iostream>
-#include "matrix_multiplication.h"
-#include <complex>
-const double EPS = 1E-9;
+#include "gauss_run.h"
+//#include "matrix_multiplication.h"
+///#include <complex>
+
+const double EPS = 1E-8;
 
 template<typename T>
 struct is_complex : public std::false_type {};
@@ -18,7 +15,6 @@ template<typename T>
 struct is_complex<std::complex<T>> : public std::true_type {};
 
 
-const double EPS = 1E-9;
 
 
 class BadMatrixDimension: public std::exception {
@@ -128,8 +124,8 @@ public:
     }
 
 
-    virtual Matrix &operator=(Matrix<T> &&rhs) noexcept {
-        if (this == &rhs) return *this;
+    Matrix &operator=(Matrix<T> &&rhs) noexcept {
+        if (this == &rhs) return (*this);
 
         Matrix<T> mat(std::move(rhs));
         std::swap(transposed, mat.transposed);
@@ -140,8 +136,8 @@ public:
     }
 
 
-    virtual Matrix &operator=(const Matrix<T> &rhs) {
-        if (this == &rhs) return *this;
+    Matrix &operator=(const Matrix<T> &rhs) {
+        if (this == &rhs) return (*this);
 
         Matrix<T> mat(rhs);
         std::swap(transposed, mat.transposed);
@@ -171,7 +167,7 @@ public:
     Matrix operator+(const Matrix<T>& rm) const {
         if (Shape() != rm.Shape())  {
             std::cerr<<"In Matrix::operator +   ";
-            throw BadMatrixDimension();
+            //throw BadMatrixDimension();
         }
 
         T* res = new T[vert_dim*horiz_dim];
@@ -187,9 +183,9 @@ public:
     Matrix operator-(const Matrix<T>& rm) const {
         if (Shape() != rm.Shape())  {
             std::cerr<<"In Matrix::operator -   ";
-            throw BadMatrixDimension();
+            //throw BadMatrixDimension();
         }
-        T* res;
+        T* res = new T[vert_dim*horiz_dim];
         for (size_t i = 0; i < vert_dim; ++i) {
             for (size_t j = 0; j < horiz_dim; ++j) {
                 res[i*horiz_dim + j] = (*this)(i, j) - rm(i, j);
@@ -207,7 +203,6 @@ public:
         return Matrix<T>(std::move(res), vert_dim, horiz_dim);
     }
 
-
     bool operator== (const Matrix<T>& rm) const {
 
         if (vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim) {
@@ -222,7 +217,15 @@ public:
     }
 
     bool operator != (const Matrix<T>& rm) const {
-        return this != rm;
+        if (vert_dim != rm.vert_dim || horiz_dim != rm.horiz_dim) {
+            return true;
+        }
+        for (size_t i = 0; i < vert_dim; ++i) {
+            for (size_t j = 0; j < horiz_dim; j++) {
+                if ((*this)(i, j) != rm(i, j)) { return true; }
+            }
+        }
+        return false;
     }
 
     const T& operator()(size_t i, size_t j) const{
@@ -232,10 +235,10 @@ public:
             else
                 return coord[i * horiz_dim + j];
 
-        }
+        }/*
         else {
             throw IndexOutOfMatrix();
-        }
+        }*/
     }
 
     T& operator()(size_t i, size_t j) {
@@ -245,10 +248,7 @@ public:
             else
                 return coord[i * horiz_dim + j];
         }
-        else {
-            throw IndexOutOfMatrix();
 
-        }
         /*else {
             throw IndexOutOfMatrix();
         }*/
@@ -258,16 +258,17 @@ public:
     Matrix operator* (const Matrix<T>& rm) {
         if (horiz_dim != rm.vert_dim) {
             std::cerr<<"In Matrix::operator *   ";
+            //throw BadMatrixDimension();
+        }
+
         T* res = new T[rm.horiz_dim * vert_dim];
-        T buffer; //T must be 0-compatible type
+        T buffer;
 
         for (size_t i = 0; i < vert_dim; i++) {
             for (size_t j = 0; j < rm.horiz_dim; j++) {
                 buffer = 0;
                 for (size_t k = 0; k < horiz_dim; k++) {
-
                     buffer += (*this)(i, k) * rm(k, j);
-
                 }
                 res[i * rm.horiz_dim + j] = buffer;
             }
@@ -276,70 +277,46 @@ public:
     }
 
 
-    Matrix<T> Pow(Matrix<T>& rm, int n){///without ln working time
-        if (n==0){
-            T* res = new T[rm.horiz_dim * rm.vert_dim];
-            for (int i=0;i<rm.horiz_dim;i++){
-                for (size_t j = 0; j < rm.horiz_dim; j++){
-                    if (i==j){res[i * horiz_dim + j] = 1;
-                    }
-                    else {res[i * horiz_dim + j] = 0;}
-                }
 
-            }
-            return Matrix(res, rm.vert_dim, rm.horiz_dim);
-        }
-        else{
-        if (vert_dim==horiz_dim){
-            T* res = new T[rm.horiz_dim * rm.vert_dim];
-            for (size_t i = 0; i < rm.vert_dim; i++) {
-                for (size_t j = 0; j < rm.horiz_dim; j++){
-                    res[i * horiz_dim + j] = rm(i,j);
-                }
-            }
-            T buffer; //T must be 0-compatible type
-            for (size_t l = 1; l-1 <= n-2; l++) {
-                for (size_t i = 0; i < vert_dim; i++) {
-                    for (size_t j = 0; j < rm.horiz_dim; j++) {
-                        buffer = 0;
-                        for (size_t k = 0; k < horiz_dim; k++) {
-                            buffer += res[i * rm.horiz_dim + k] * rm(k, j);
-                        }
-                        res[i * rm.horiz_dim + j] = buffer;
-                    }
-                }
 
-            }
-            //if (l!=n-1){rm = Matrix(res, vert_dim, rm.horiz_dim);}
-            return Matrix(res, rm.vert_dim, rm.horiz_dim);
-            }}
-            //return (*this);}
-        }
-        ///else - here need to be an exeption
-
-    Matrix<T> PowersTwo(Matrix<T> rm, int a){///4 is equal to [0,0,1]
-        Matrix<T> a_2[a];
-        int b_2[a];
-        int i = 0;
-        while (a > 0) {
-            //PrintMatrixInt(rm.Pow(rm,i));
-            a_2[i] = rm.Pow(rm,i)*(a % 2);
-            a = a / 2;
+    Matrix<T> Pow(Matrix<T> rm, int a){
+        int b=a;
+        int i=0;
+        while (b > 0) {
+            b = b / 2;
             i++;
         }
-        Matrix<T> Result = rm;
-        for (int k=0;k<i;k++){
+        Matrix<T> a_2[i];//here we keep matrices for our degree
+        int b_2[i];//here we keep numbers for our degree --4 is equal to [0,0,1]
+        Matrix<T> degree[i];//here we keep matrices for the degrees of 2 [1,1,1,1,...]
+        Matrix A(rm.VertDim(), rm.HorizDim(), IDENTITY);
+        degree[0]=rm;
+        //std::cout<<i<<" "<<b_2[0]<<" "<<b_2[1] <<b_2[2] <<std::endl;
+        Matrix<T> Result(rm.VertDim(), rm.HorizDim(), IDENTITY);
 
-            Result = Result * a_2[k];
-        };
+        if (a % 2 == 1){a_2[0] = degree[0]*(a % 2);}
+        else a_2[0] = A;
+        a = a / 2;
+        Result =a_2[0]*Result;
+        if(i>1) {
+            for (int k = 1; k < i; k++) {
+                degree[k] = degree[k - 1] * degree[k - 1];
+                if (a % 2 == 1) { a_2[k] = degree[k] * (a % 2); }
+                else {
+                    a_2[k] = A;
+                }
+                a = a / 2;
+                Result = a_2[k] * Result;
+            }
+        }
         return Result;
-    }
+    }///else - here need to be an exception
 
 
     Matrix SmartMult(Matrix<T>& rm) { //to fix non-8-divisible cases and transposed cases
         if (horiz_dim != rm.vert_dim) {
             std::cerr<<"In Matrix::SmartMult   ";
-            throw BadMatrixDimension();
+            //throw BadMatrixDimension();
         }
 
         size_t M = (vert_dim/8 + 1) * 8;
@@ -368,7 +345,7 @@ public:
     T Determinant() const {
         if (VertDim() != HorizDim()) {
             std::cerr<<"In Matrix::Determinant   ";
-            throw NotSquareMatrix();
+            //throw NotSquareMatrix();
         }
         T det_calc = T(1);
         std::vector<size_t> v;
@@ -457,7 +434,7 @@ template<typename T>
 std::pair<bool, Matrix<T>> Inverse(const Matrix<T> & A) {
     if (A.VertDim() != A.HorizDim()) {
         std::cerr<<"In Inverse(const Matrix<T> &)   ";
-        throw NotSquareMatrix();
+        //throw NotSquareMatrix();
     }
     T det_calc = T(1);
     size_t rank = 0;
