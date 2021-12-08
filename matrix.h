@@ -12,7 +12,7 @@ class Matrix;
 #include "matrix_multiplication.h"
 #include "gauss_run.h"
 #include <complex>
-const double EPS = 1E-11;
+const double EPS = 1E-10;
 
 template<typename T>
 struct is_complex : public std::false_type {};
@@ -278,6 +278,11 @@ public:
         std::vector<size_t> v;
         size_t rank = 0;
         Matrix<T> B = StraightRun(*this, Matrix<T>(horiz_dim, 1), det_calc, v, rank).first;
+
+        for (size_t i = 0; i < B.VertDim(); i++) {
+            det_calc *= B(i, i);
+        }
+
         return det_calc;
     }
 
@@ -287,7 +292,7 @@ public:
         T det_calc = T(0);
         std::vector<size_t> v;
         Matrix<T> B = StraightRun(*this, Matrix<T>(vert_dim, 1), det_calc, v, rank).first;
-        return rank;
+                return rank;
     }
 
     void Transpose() {
@@ -347,6 +352,38 @@ public:
     std::enable_if_t<!is_complex<Q>::value, void> Conjugate() {
         return;
     }
+    Matrix<T> Pow(Matrix<T> rm, int a){
+        int b=a;
+        int i=0;
+        while (b > 0) {
+            b = b / 2;
+            i++;
+        }
+        Matrix<T> a_2[i];//here we keep matrices for our degree
+        int b_2[i];//here we keep numbers for our degree --4 is equal to [0,0,1]
+        Matrix<T> degree[i];//here we keep matrices for the degrees of 2 [1,1,1,1,...]
+        Matrix A(rm.VertDim(), rm.HorizDim(), IDENTITY);
+        degree[0]=rm;
+        //std::cout<<i<<" "<<b_2[0]<<" "<<b_2[1] <<b_2[2] <<std::endl;
+        Matrix<T> Result(rm.VertDim(), rm.HorizDim(), IDENTITY);
+
+        if (a % 2 == 1){a_2[0] = degree[0]*(a % 2);}
+        else a_2[0] = A;
+        a = a / 2;
+        Result =a_2[0]*Result;
+        if(i>1) {
+            for (int k = 1; k < i; k++) {
+                degree[k] = degree[k - 1] * degree[k - 1];
+                if (a % 2 == 1) { a_2[k] = degree[k] * (a % 2); }
+                else {
+                    a_2[k] = A;
+                }
+                a = a / 2;
+                Result = a_2[k] * Result;
+            }
+        }
+        return Result;
+    }///else - here need to be an exception
 
 };
 template<typename T>
@@ -367,7 +404,7 @@ std::pair<bool, Matrix<T>> Inverse(const Matrix<T> & A) {
     }
     p = ReverseRun(p.first, p.second, v, rank);
     return {true, p.second};
-};
+}
 
 template<typename T>
 void ShowMatrix(const Matrix<T>&  mat)

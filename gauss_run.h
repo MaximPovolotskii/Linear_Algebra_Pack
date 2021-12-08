@@ -20,7 +20,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim() - number_of_null_rows); i++) {
         if (std::abs(A(i, i)) < G_EPS) {         ///Перестановка строк
-            for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
+            for (size_t i1 = i; i1 < A.VertDim(); i1++) {
                 if (std::abs(A(i1, i)) > G_EPS) {
                     for (size_t j1 = i; j1 < A.HorizDim(); j1++) {
                         std::swap(A(i1, j1), A(i, j1));
@@ -76,6 +76,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
             i--;
         }
     }
+
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim()); i++) {
         if (std::abs(A(i, i)) > G_EPS) {
             rank++;

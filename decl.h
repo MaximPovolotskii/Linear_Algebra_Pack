@@ -9,7 +9,6 @@ public:
     }
 };
 
-
 class NotSquareMatrix: public BadMatrixDimension {
 public:
     const char* what() const throw() override {
