@@ -2,8 +2,13 @@
 #ifndef LINALG_GAUSS_SOLVE_H
 #define LINALG_GAUSS_SOLVE_H
 
+<<<<<<< HEAD
 
 #include "matrix.h"
+=======
+#include "matrix.h"
+#include <cmath>
+>>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
 
 template<typename T>
 std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
@@ -16,23 +21,35 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
         throw BadMatrixDimension();
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim() - number_of_null_rows); i++) {
+<<<<<<< HEAD
         if (abs(A(i, i)) < EPS) {         ///Перестановка строк
             for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
                 if (abs(A(i1, i)) > EPS) {
+=======
+        if (std::abs(A(i, i)) < EPS) {         ///Перестановка строк
+            for (size_t i1 = i; i1 < A.VertDim(); i1++) { //// mozhno vichest - number_of_null_rows
+                if (std::abs(A(i1, i)) > EPS) {
+>>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
                     for (size_t j1 = i; j1 < A.HorizDim(); j1++) {
                         std::swap(A(i1, j1), A(i, j1));
                     }
                     for (size_t j2 = 0; j2 < B.HorizDim(); j2++) {
                         std::swap(B(i1, j2), B(i, j2));
                     }
-                    det = det * (-1);
+                    det = -det;
                     break;
                 }
             }
         }
+<<<<<<< HEAD
         if (abs(A(i, i)) < EPS) { ///нужно переставлять столбцы
             for (size_t j3 = i; j3 < A.HorizDim(); j3++) {
                 if (abs(A(i, j3)) > EPS) {
+=======
+        if (std::abs(A(i, i)) < EPS) { ///нужно переставлять столбцы
+            for (size_t j3 = i; j3 < A.HorizDim(); j3++) {
+                if (std::abs(A(i, j3)) > EPS) {
+>>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
                     for (size_t i3 = 0; i3 < A.VertDim(); i3++) {
                         std::swap(A(i3, i), A(i3, j3));
                     }
@@ -41,7 +58,11 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
                 }
             }
         }
+<<<<<<< HEAD
         if (abs(A(i, i)) > EPS)         ///Иначе вся строка нулевая
+=======
+        if (std::abs(A(i, i)) > EPS)         ///Иначе вся строка нулевая
+>>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
         {
             T a = A(i, i);
             for (size_t j = i; j < A.HorizDim(); j++) {    ///разделили i-тую строку на A[i, i]
@@ -74,7 +95,11 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
         }
     }
     for (size_t i = 0; i < min(A.HorizDim(), A.VertDim()); i++) {
+<<<<<<< HEAD
         if (abs(A(i, i)) > EPS) {
+=======
+        if (std::abs(A(i, i)) > EPS) {
+>>>>>>> 479099b8b59811d8e6ab8b32c141163f7ce700aa
             rank++;
         }
     }
