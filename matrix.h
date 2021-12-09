@@ -54,7 +54,7 @@ public:
     bool operator!= (const Matrix<T>& rm) const;
     const T& operator()(size_t i, size_t j) const;
     T& operator()(size_t i, size_t j);
-    Matrix operator* (const Matrix<T>& rm);
+    Matrix operator* (const Matrix<T>& rm) const;
     Matrix SmartMult(Matrix<T>& rm);
     T Determinant() const;
     size_t Rank() const;
