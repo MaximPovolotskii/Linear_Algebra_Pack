@@ -3,4 +3,5 @@ project(LAII)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-march=native")
-add_executable(LAII catch_test.cpp qr_eigvals.h)
+add_executable(LAII catch_test.cpp qr_eigvals.h catch_amalgamated.cpp)
+add_executable(eigenvalues eigenvectors_test.cpp )
