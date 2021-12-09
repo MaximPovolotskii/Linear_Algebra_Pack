@@ -17,7 +17,7 @@ int main() {
     Matrix<std::complex<long double>> Q(a, 4, 4);
     Matrix<std::complex<long double>> R(a, 4, 4);
 
-/*    std::pair<std::vector<std::complex<long double>>, Matrix<long double>> pqr(QREigenvalues(A));
+    std::pair<std::vector<std::complex<long double>>, Matrix<long double>> pqr(QREigenvalues(A));
     std::vector<std::complex<long double>> im = pqr.first;
     Matrix<long double> M = pqr.second;
 
@@ -39,7 +39,7 @@ int main() {
     std::cout << '\n';
     std::cout << '\n';*/
 
-/*
+
     QRDecomposition(A, Q, R);
     std::cout << 'Q';
     std::cout << '\n';
@@ -59,9 +59,9 @@ int main() {
             std::cout << R(i, j) << " ";
         }
         std::cout << '\n';
-    }*/
+    }
 
-/*
+
 
     p = QREigenvalues(A);
 
@@ -90,6 +90,6 @@ int main() {
     auto Q1 = Q;
     Q1.Conjugate();
     Q1.Transpose();
-*/
+
 
 }
