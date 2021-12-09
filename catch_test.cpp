@@ -8,7 +8,7 @@
 #include <cmath>
 #include "linear_system_solve.h"
 
-/*
+
 TEST_CASE("operator+, operator=, .Shape() without random numbers") {
     int n=3, m=4, N = n*m;
     int max;
@@ -142,7 +142,7 @@ TEST_CASE("matrix in power with random elements") {
     REQUIRE(D*D*D*D*D == D.Pow(D,5));
     REQUIRE(D*D*D*D*D*D == D.Pow(D,6));
     REQUIRE(D.Pow(D,1) == D);
-}*/
+}
 TEST_CASE("determinant and rank") {
     float n=5;
     float a2[25]{54,	8,	9,	5,	2,
