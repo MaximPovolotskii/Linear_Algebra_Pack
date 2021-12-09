@@ -12,7 +12,28 @@ const double THRESHOLD = 1E-8;
 const size_t MAXITER = 1E10;
 
 template <typename T>
-bool Converged (const Matrix<T>& mat, double threshold) {
+bool Converged (const Matrix<T>& mat, double threshold);
+template <typename T>
+std::pair<std::complex<T>, std::complex<T>> ComputeComplexEigenvalues2x2(const T& a11, const T& a12,
+                                                                         const T& a21, const T& a22, bool& are_complex);
+template <typename T>
+std::pair<std::vector<T>, std::vector<std::complex<T>>> QREigenvalues (const Matrix<T>& A,
+                                                                       size_t max_iterations = MAXITER,
+                                                                       double threshold = THRESHOLD);
+
+template <typename T>
+std::pair<size_t, Matrix<T>> FindEigenvectors(const Matrix<T>& A, T lambda);
+template <typename T>
+std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T>& A, std::complex<T> lambda);
+template<typename T>
+std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T> &A, std::complex<T> lambda);
+template <typename T>
+std::tuple<size_t, Vector<T>, Matrix<T>> FindGeneralizedEigenvectors(const Matrix<T>& A, T lambda,
+                                                                     const Vector<T>& v );
+
+
+template<typename T>
+bool Converged(const Matrix<T> &mat, double threshold) {
     for (size_t i = 2; i < mat.VertDim(); ++i) {
         for (size_t j = 0; j < i - 1; ++j) {
             if (std::abs(mat(i, j)) > threshold)
@@ -26,10 +47,9 @@ bool Converged (const Matrix<T>& mat, double threshold) {
     return true;
 }
 
-
-template <typename T>
-std::pair<std::complex<T>, std::complex<T>> ComputeComplexEigenvalues2x2(const T& a11, const T& a12,
-                                                                         const T& a21, const T& a22, bool& are_complex) {
+template<typename T>
+std::pair<std::complex<T>, std::complex<T>>
+ComputeComplexEigenvalues2x2(const T &a11, const T &a12, const T &a21, const T &a22, bool &are_complex) {
     T D = (a11 + a22)*(a11 + a22) - 4 * (a11 * a22 - a12 * a21);
     if (D < -THRESHOLD) {
         T re = (a11 + a22)/2;
@@ -49,11 +69,9 @@ std::pair<std::complex<T>, std::complex<T>> ComputeComplexEigenvalues2x2(const T
     }
 }
 
-
-template <typename T>
-std::pair<std::vector<T>, std::vector<std::complex<T>>> QREigenvalues (const Matrix<T>& A,
-                                                                       size_t max_iterations = MAXITER,
-                                                                       double threshold = THRESHOLD) {
+template<typename T>
+std::pair<std::vector<T>, std::vector<std::complex<T>>>
+QREigenvalues(const Matrix<T> &A, size_t max_iterations, double threshold) {
     if (A.VertDim() != A.HorizDim()) {
         std::cerr<<"In QREigenvalues (const Matrix<T>& )    ";
         throw NotSquareMatrix();
@@ -98,8 +116,8 @@ std::pair<std::vector<T>, std::vector<std::complex<T>>> QREigenvalues (const Mat
     return {real, img};
 }
 
-template <typename T>
-std::pair<size_t, Matrix<T>> FindEigenvectors(const Matrix<T>& A, T lambda) {
+template<typename T>
+std::pair<size_t, Matrix<T>> FindEigenvectors(const Matrix<T> &A, T lambda) {
     if (A.VertDim() != A.HorizDim()) {
         std::cerr<<"In FindEigenvector (const Matrix<T>& , T)    ";
         throw NotSquareMatrix();
@@ -116,8 +134,9 @@ std::pair<size_t, Matrix<T>> FindEigenvectors(const Matrix<T>& A, T lambda) {
     }
 }
 
-template <typename T>
-std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T>& A, std::complex<T> lambda) {
+
+template<typename T>
+std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T> &A, std::complex<T> lambda) {
     Matrix<std::complex<T>> A_c(A.VertDim(), A.HorizDim());
     for (size_t i = 0; i < A_c.VertDim(); i++) {
         for (size_t j = 0; j < A_c.HorizDim(); j++) {
@@ -127,9 +146,8 @@ std::pair<size_t, Matrix<std::complex<T>>> FindEigenvectors(const Matrix<T>& A, 
     return FindEigenvectors(A_c, lambda);
 }
 
-template <typename T>
-std::tuple<size_t, Vector<T>, Matrix<T>> FindGeneralizedEigenvectors(const Matrix<T>& A, T lambda,
-                                                                     const Vector<T>& v ) {
+template<typename T>
+std::tuple<size_t, Vector<T>, Matrix<T>> FindGeneralizedEigenvectors(const Matrix<T> &A, T lambda, const Vector<T> &v) {
     if (A.VertDim() != A.HorizDim()) {
         std::cerr<<"In FindGeneralizedEigenvectors (const Matrix<T>& , T)    ";
         throw NotSquareMatrix();
@@ -145,6 +163,8 @@ std::tuple<size_t, Vector<T>, Matrix<T>> FindGeneralizedEigenvectors(const Matri
         return {std::get<2>(solution).HorizDim(),std::get<1>(solution), std::get<2>(solution)};
     }
 }
+
+
 
 
 #endif //LINALG_QR_EIGVALS_H

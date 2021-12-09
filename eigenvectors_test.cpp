@@ -11,8 +11,6 @@
 
 using namespace std::complex_literals;
 int main() {
-
-
     std::vector<long double*> v;
     long double b0[16] {1, 2, 0, 1, 0, -2, 7, 4, 4, 0, 3, 0, -6, 0, 6, 8};
     long double b1[16] {6, 9, 0, 4, 4, 9, -7, 0, 0, 0, 0, 1, 3, -12, 0, 0};

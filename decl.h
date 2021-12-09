@@ -23,7 +23,9 @@ class IndexOutOfMatrix: public std::exception {
 };
 
 template<class T>
-const T& min(const T& a, const T& b)
-{
+const T& min(const T& a, const T& b);
+
+template<class T>
+const T &min(const T &a, const T &b) {
     return (b < a) ? b : a;
 }

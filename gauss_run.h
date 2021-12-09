@@ -9,7 +9,14 @@
 const long double G_EPS = 1E-4;
 
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank) {
+std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, std::vector<size_t> &v, size_t & rank);
+
+template<typename T>
+std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t& rank);
+
+
+template<typename T>
+std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T &det, std::vector<size_t> &v, size_t &rank) {
     v = {};
     size_t number_of_null_rows = 0;
     for (size_t i0 = 0; i0 < A.HorizDim(); i0++) {
@@ -86,7 +93,7 @@ std::pair<Matrix<T>, Matrix<T>> StraightRun(Matrix<T> A, Matrix<T> B, T& det, st
 }
 
 template<typename T>
-std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t& rank) {
+std::pair<Matrix<T>, Matrix<T>> ReverseRun(Matrix<T> A, Matrix<T> B, std::vector<size_t> &v, size_t &rank) {
     if (B.VertDim() != A.VertDim()) {
         throw BadMatrixDimension();
     }

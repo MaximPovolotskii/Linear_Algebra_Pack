@@ -9,7 +9,20 @@
 using namespace std::complex_literals;
 
 template <typename CT>
-std::enable_if_t<is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v) {
+std::enable_if_t<is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v);
+template <typename CT>
+std::enable_if_t<!is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v);
+template<typename CT>
+void ExtractMinor(const Matrix<CT>& mat, size_t d, Matrix<CT> & res);
+template<typename CT>
+void ExtractColumn(const Matrix<CT> &mat, Vector<CT>& v, size_t c);
+template <typename CT>
+std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& mat, Matrix<CT>& Q, Matrix<CT>& R);
+template <typename CT>
+std::enable_if_t<!is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& mat, Matrix<CT>& Q, Matrix<CT>& R);
+
+template<typename CT>
+Matrix<CT> ComputeHouseholderFactor(const Vector <CT> &v) {
     size_t n = v.VertDim();
     Matrix<CT> res(n, n, NULLMATRIX);
     for (size_t i = 0; i < n; i++) {
@@ -22,28 +35,14 @@ std::enable_if_t<is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(con
     return res;
 }
 
-template <typename CT>
-std::enable_if_t<!is_complex<CT>::value, Matrix<CT>> ComputeHouseholderFactor(const Vector<CT>& v) {
-    size_t n = v.VertDim();
-    Matrix<CT> res(n, n, NULLMATRIX);
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            res(i, j) = v(i) * v(j) * (-2.);
-        }
-    }
-    for (size_t i = 0; i < n; i++)
-        res(i, i) += 1;
-    return res;
-}
-
 template<typename CT>
-void ExtractMinor(const Matrix<CT>& mat, size_t d, Matrix<CT> & res) {
+void ExtractMinor(const Matrix<CT> &mat, size_t d, Matrix<CT> &res) {
     for (size_t i = 0; i < mat.VertDim(); i++) {
         for (size_t j = 0; j < mat.HorizDim(); j++)
             res(i,j) = 0;
     }
     for (size_t i = 0; i < d; i++)
-            res(i,i) = 1;
+        res(i,i) = 1;
     for (size_t i = d; i < mat.VertDim(); i++) {
         for (size_t j = d; j < mat.HorizDim(); j++)
             res(i,j) = mat(i,j);
@@ -51,13 +50,13 @@ void ExtractMinor(const Matrix<CT>& mat, size_t d, Matrix<CT> & res) {
 }
 
 template<typename CT>
-void ExtractColumn(const Matrix<CT> &mat, Vector<CT>& v, size_t c){
+void ExtractColumn(const Matrix<CT> &mat, Vector <CT> &v, size_t c) {
     for (size_t i = 0; i < mat.VertDim(); i++)
         v(i) = mat(i, c);
 }
 
-template <typename CT>
-std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& mat, Matrix<CT>& Q, Matrix<CT>& R) {
+template<typename CT>
+std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT> &mat, Matrix<CT> &Q, Matrix<CT> &R) {
     size_t vert_dim = mat.VertDim();
     size_t horiz_dim = mat.HorizDim();
 
@@ -89,8 +88,8 @@ std::enable_if_t<is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& 
     Q.Transpose();
 }
 
-template <typename CT>
-std::enable_if_t<!is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>& mat, Matrix<CT>& Q, Matrix<CT>& R) {
+template<typename CT>
+std::enable_if_t<!is_complex<CT>::value, void> QRDecomposition(const Matrix<CT> &mat, Matrix<CT> &Q, Matrix<CT> &R) {
     size_t vert_dim = mat.VertDim();
     size_t horiz_dim = mat.HorizDim();
     std::vector<Matrix<CT>> qv(vert_dim);
@@ -121,5 +120,23 @@ std::enable_if_t<!is_complex<CT>::value, void> QRDecomposition(const Matrix<CT>&
     R = Q*mat;
     Q.Transpose();
 }
+
+template<typename CT>
+Matrix<CT> ComputeHouseholderFactor(const Vector <CT> &v) {
+    size_t n = v.VertDim();
+    Matrix<CT> res(n, n, NULLMATRIX);
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            res(i, j) = v(i) * v(j) * (-2.);
+        }
+    }
+    for (size_t i = 0; i < n; i++)
+        res(i, i) += 1;
+    return res;
+}
+
+
+
+
 
 #endif //LINALG_QR_DECOMPOSITION_H

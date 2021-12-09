@@ -6,8 +6,10 @@
 #define LINALG_MATRIX_MULTIPLICATION_H
 #include <immintrin.h>
 
-void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, float* C)
-{
+void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, float* C);
+void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B, double* C);
+
+void float_gemm(size_t M, size_t N, size_t K, const float *A, const float *B, float *C) {
     for (size_t i = 0; i < M; ++i)
     {
         float* c = C + i * N;
@@ -26,8 +28,7 @@ void float_gemm(size_t M, size_t N, size_t K, const float* A, const float* B, fl
     }
 }
 
-void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B, double* C)
-{
+void double_gemm(size_t M, size_t N, size_t K, const double *A, const double *B, double *C) {
     for (size_t i = 0; i < M; ++i)
     {
         double* c = C + i * N;
@@ -45,6 +46,7 @@ void double_gemm(size_t M, size_t N, size_t K, const double* A, const double* B,
         }
     }
 }
+
 
 template <typename T, typename Enable = void>
 struct gemm {

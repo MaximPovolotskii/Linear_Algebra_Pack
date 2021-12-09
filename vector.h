@@ -16,82 +16,117 @@ public:
 template<class T>
 class Vector : public Matrix<T> {
 public:
-    Vector() : Matrix<T>() {};
-    Vector(const Matrix<T> & mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {
-            std::cerr<<"In Vector(const Matrix<T> & ) ";
-            throw BadMatrixDimension();}
-    }
-    Vector(Matrix<T> && mat): Matrix<T>(mat){
-        if (mat.HorizDim() != 1) {
-            std::cerr<<"In Vector(Matrix<T> && ) ";
-            throw BadMatrixDimension();}
-    }
+    Vector();
+    Vector(const Matrix<T> & mat);
+    Vector(Matrix<T> && mat);
     Vector(const Vector<T> & vect): Matrix<T>(vect) {}
     Vector(Vector<T> && vect): Matrix<T>(vect) {}
-    Vector &operator=(Matrix<T> &&rhs) noexcept {
-        if (rhs.HorizDim() != 1) {
-            std::cerr<<"In Vector &operator=(Matrix<T> &&)   ";
-            throw BadMatrixDimension();
-        }
-        if (this == &rhs) return *this;
-        Vector<T> mat(std::move(rhs));
-        std::swap(this->Matrix<T>::transposed, mat.transposed);
-        std::swap(this->Matrix<T>::coord, mat.coord);
-        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
-        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
-        return *this;
-    }
-    Vector &operator=(Vector<T> &&rhs) noexcept {
-        if (this == &rhs) return *this;
-        Vector<T> mat(std::move(rhs));
-        std::swap(this->Matrix<T>::transposed, mat.transposed);
-        std::swap(this->Matrix<T>::coord, mat.coord);
-        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
-        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
-        return *this;
-    }
-    Vector &operator=(const Matrix<T> &rhs) {
-        if (rhs.HorizDim() != 1) {
-            std::cerr << "In Vector &operator=(const Matrix<T> &)   ";
-            throw BadMatrixDimension();
-        }
-        if (this == &rhs) return *this;
-        Vector<T> mat(rhs);
-        std::swap(this->Matrix<T>::transposed, mat.transposed);
-        std::swap(this->Matrix<T>::coord, mat.coord);
-        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
-        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
-        return *this;
-    }
-    Vector &operator=(const Vector<T> &rhs) {
-        if (this == &rhs) return *this;
-        Vector<T> mat(rhs);
-        std::swap(this->Matrix<T>::transposed, mat.transposed);
-        std::swap(this->Matrix<T>::coord, mat.coord);
-        std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
-        std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
-        return *this;
-    }
-    explicit Vector(size_t n, int type = NONE) : Matrix<T>(n, 1, type) {}
-    Vector(T* v, size_t n) : Matrix<T>(v, n, 1) {}
-    Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
-    const T& operator() (size_t i) const {
-        if (i >= this->VertDim()) {
-            std::cerr<<"In Vector::operator()   ";
-            throw BadVectorDimension();
-        }
-        return this->Matrix<T>::operator()(i, 0);
-    }
-
-    T& operator() (size_t i) {
-        if (i >= this->VertDim()) {
-            std::cerr<<"In Vector::operator()   ";
-            throw BadVectorDimension();
-        }
-        return this->Matrix<T>::operator()(i, 0);
-    }
+    Vector &operator=(Matrix<T> &&rhs) noexcept;
+    Vector &operator=(Vector<T> &&rhs) noexcept;
+    Vector &operator=(const Matrix<T> &rhs);
+    Vector &operator=(const Vector<T> &rhs);
+    explicit Vector(size_t n, int type = NONE);
+    Vector(T* v, size_t n);
+    Vector(std::vector<T> v, size_t n);
+    const T& operator() (size_t i) const;
+    T& operator() (size_t i);
 };
+
+template<class T>
+Vector<T>::Vector() : Matrix<T>() {}
+
+template<class T>
+Vector<T>::Vector(const Matrix<T> &mat): Matrix<T>(mat){
+    if (mat.HorizDim() != 1) {
+        std::cerr<<"In Vector(const Matrix<T> & ) ";
+        throw BadMatrixDimension();}
+}
+
+template<class T>
+Vector<T>::Vector(Matrix<T> &&mat): Matrix<T>(mat){
+    if (mat.HorizDim() != 1) {
+        std::cerr<<"In Vector(Matrix<T> && ) ";
+        throw BadMatrixDimension();}
+}
+
+template<class T>
+Vector<T> &Vector<T>::operator=(Matrix<T> &&rhs) noexcept {
+    if (rhs.HorizDim() != 1) {
+        std::cerr<<"In Vector &operator=(Matrix<T> &&)   ";
+        throw BadMatrixDimension();
+    }
+    if (this == &rhs) return *this;
+    Vector<T> mat(std::move(rhs));
+    std::swap(this->Matrix<T>::transposed, mat.transposed);
+    std::swap(this->Matrix<T>::coord, mat.coord);
+    std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+    std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+    return *this;
+}
+
+template<class T>
+Vector<T> &Vector<T>::operator=(Vector<T> &&rhs) noexcept {
+    if (this == &rhs) return *this;
+    Vector<T> mat(std::move(rhs));
+    std::swap(this->Matrix<T>::transposed, mat.transposed);
+    std::swap(this->Matrix<T>::coord, mat.coord);
+    std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+    std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+    return *this;
+}
+
+template<class T>
+Vector<T> &Vector<T>::operator=(const Matrix<T> &rhs) {
+    if (rhs.HorizDim() != 1) {
+        std::cerr << "In Vector &operator=(const Matrix<T> &)   ";
+        throw BadMatrixDimension();
+    }
+    if (this == &rhs) return *this;
+    Vector<T> mat(rhs);
+    std::swap(this->Matrix<T>::transposed, mat.transposed);
+    std::swap(this->Matrix<T>::coord, mat.coord);
+    std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+    std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+    return *this;
+}
+
+template<class T>
+Vector<T> &Vector<T>::operator=(const Vector<T> &rhs) {
+    if (this == &rhs) return *this;
+    Vector<T> mat(rhs);
+    std::swap(this->Matrix<T>::transposed, mat.transposed);
+    std::swap(this->Matrix<T>::coord, mat.coord);
+    std::swap(this->Matrix<T>::vert_dim, mat.vert_dim);
+    std::swap(this->Matrix<T>::horiz_dim, mat.horiz_dim);
+    return *this;
+}
+
+template<class T>
+Vector<T>::Vector(size_t n, int type) : Matrix<T>(n, 1, type) {}
+
+template<class T>
+Vector<T>::Vector(T *v, size_t n) : Matrix<T>(v, n, 1) {}
+
+template<class T>
+Vector<T>::Vector(std::vector<T> v, size_t n) : Matrix<T>(v, n, 1) {}
+
+template<class T>
+const T &Vector<T>::operator()(size_t i) const {
+    if (i >= this->VertDim()) {
+        std::cerr<<"In Vector::operator()   ";
+        throw BadVectorDimension();
+    }
+    return this->Matrix<T>::operator()(i, 0);
+}
+
+template<class T>
+T &Vector<T>::operator()(size_t i) {
+    if (i >= this->VertDim()) {
+        std::cerr<<"In Vector::operator()   ";
+        throw BadVectorDimension();
+    }
+    return this->Matrix<T>::operator()(i, 0);
+}
 
 template<class T>
 Vector<T> CrossProduct(Vector<T> lv, Vector<T> rv)  {
