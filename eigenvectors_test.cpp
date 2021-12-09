@@ -7,6 +7,7 @@
 #include "qr_eigvals.h"
 #include <complex>
 #include <tuple>
+#include <iomanip>
 
 
 using namespace std::complex_literals;
@@ -29,13 +30,13 @@ int main() {
 
         std::cout << "real eigenvalues"<<"\n";
         for (long double i : evr) {
-            std::cout << i <<" ";
+            std::cout << std::fixed << std::setprecision(6) << i <<" ";
         }
         std::cout << '\n';
 
         std::cout << "complex eigenvalues"<<"\n";
         for (std::complex<long double> i : evi) {
-            std::cout << i <<" ";
+            std::cout << std::fixed << std::setprecision(6) << i <<" ";
         }
         std::cout << '\n';
 
@@ -45,7 +46,7 @@ int main() {
             auto B = p.second;
             for (size_t i = 0; i < B.VertDim(); i++) {
                 for (size_t j = 0; j < B.HorizDim(); j++) {
-                    std::cout << B(i, j) << " ";
+                    std::cout << std::fixed << std::setprecision(6) << B(i, j) << " ";
                 }
                 std::cout << '\n';
             }
@@ -58,7 +59,7 @@ int main() {
             auto B = p.second;
             for (size_t i = 0; i < B.VertDim(); i++) {
                 for (size_t j = 0; j < B.HorizDim(); j++) {
-                    std::cout << B(i, j) << " ";
+                    std::cout << std::fixed << std::setprecision(6) << B(i, j) << " ";
                 }
                 std::cout << '\n';
             }
@@ -80,13 +81,13 @@ int main() {
 
         std::cout << "real eigenvalues"<<"\n";
         for (long double i : evr) {
-            std::cout << i <<" ";
+            std::cout << std::fixed << std::setprecision(6)<< i <<" ";
         }
         std::cout << '\n';
 
         std::cout << "complex eigenvalues"<<"\n";
         for (std::complex<long double> i : evi) {
-            std::cout << i <<" ";
+            std::cout << std::fixed << std::setprecision(6) << i <<" ";
         }
         std::cout << '\n';
 
@@ -96,7 +97,7 @@ int main() {
         auto B = p0.second;
         for (size_t i = 0; i < B.VertDim(); i++) {
             for (size_t j = 0; j < B.HorizDim(); j++) {
-                std::cout << B(i, j) << " ";
+                std::cout << std::fixed << std::setprecision(6) << B(i, j) << " ";
             }
             std::cout << '\n';
         }
@@ -105,10 +106,10 @@ int main() {
         Vector<long double> V0(B);
 
         auto t1 = FindGeneralizedEigenvectors(C, e, V0);
-        std::cout<<"eigenvalue "<<e<<"\n"<<"number of joined eigenvectors "<<std::get<0>(t1)<<"\n";
+        std::cout<<"eigenvalue "<< e<<"\n"<<"number of joined eigenvectors "<<std::get<0>(t1)<<"\n";
         auto V1 = std::get<1>(t1);
         for (size_t i = 0; i < V1.VertDim(); i++) {
-            std::cout << V1(i) << " ";
+            std::cout << std::fixed << std::setprecision(6)<<V1(i) << " ";
             std::cout << '\n';
         }
         std::cout << '\n';
